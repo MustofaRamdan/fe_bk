@@ -1,26 +1,128 @@
 @import "tailwindcss";
 
+/* ================= ROOT ================= */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --primary: #687E50;
+  --primary-dark: #55663f;
+  --background: #f5f7f3;
+  --text: #1f2937;
 }
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
+/* ================= BODY ================= */
 body {
   background: var(--background);
-  color: var(--foreground);
+  color: var(--text);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ================= EDITOR ================= */
+
+.editor-wrapper {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: white;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+/* 🔥 focus effect */
+.editor-wrapper:focus-within {
+  border-color: var(--primary);
+  background: #f0f5ea;
+  box-shadow: 0 0 0 2px rgba(104, 126, 80, 0.2);
+}
+
+/* ===== toolbar ===== */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  background: #f9f9f9;
+}
+
+.toolbar button {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.toolbar button:hover {
+  background: #eee;
+}
+
+/* 🔥 active state */
+.toolbar button.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+/* ===== editor content ===== */
+.editor-content {
+  min-height: 200px;
+  padding: 12px;
+  outline: none;
+  line-height: 1.6;
+}
+
+/* text spacing */
+.editor-content p {
+  margin-bottom: 10px;
+}
+
+/* heading */
+.editor-content h1 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.editor-content h2 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.editor-content h3 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.camera-btn {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.2s;
+}
+
+.camera-btn:hover {
+  background: #eee;
+}
+
+.preview-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* jumlah baris */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* image */
+.editor-content img {
+  max-width: 100%;
+  border-radius: 10px;
+  margin: 10px 0;
 }
