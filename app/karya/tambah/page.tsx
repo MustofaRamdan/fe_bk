@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import DesktopLayout from "@/components/DesktopLayout"
 
 const KELAS_OPTIONS = ["X", "XI", "XII"]
 const JURUSAN_OPTIONS = ["RPL 1", "RPL 2", "BR 1", "BR 2", "AKL 1", "AKL 2", "MP 1", "MP 2"]
@@ -11,6 +12,7 @@ export default function TambahKaryaPage() {
   const router = useRouter()
   const [judul, setJudul] = useState("")
   const [deskripsi, setDeskripsi] = useState("")
+
   const [link, setLink] = useState("")
   const [namaPembuat, setNamaPembuat] = useState("")
   const [kelas, setKelas] = useState("")
@@ -121,24 +123,7 @@ export default function TambahKaryaPage() {
   }
 
   return (
-    <div style={pageWrapper}>
-      {/* Header */}
-      <header style={header}>
-        <button style={menuButton}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-        </button>
-        <h1 style={headerTitle}>BK SMKN 12</h1>
-        <div style={userIcon}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-            <circle cx="12" cy="8" r="4" />
-            <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-          </svg>
-        </div>
-      </header>
+    <DesktopLayout>
 
       {/* Main Content */}
       <main style={mainContent}>
@@ -328,7 +313,7 @@ export default function TambahKaryaPage() {
 
             {/* Info Status */}
             <div style={infoBox}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7c4e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 8, flexShrink: 0 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#687E50" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 8, flexShrink: 0 }}>
                 <circle cx="12" cy="12" r="10" />
                 <line x1="12" y1="16" x2="12" y2="12" />
                 <line x1="12" y1="8" x2="12.01" y2="8" />
@@ -365,7 +350,7 @@ export default function TambahKaryaPage() {
           </form>
         </div>
       </main>
-    </div>
+    </DesktopLayout>
   )
 }
 
@@ -378,7 +363,7 @@ const pageWrapper = {
 }
 
 const header = {
-  background: "#6b7c4e",
+  background: "#687E50",
   padding: "16px 20px",
   display: "flex",
   alignItems: "center",
@@ -538,7 +523,7 @@ const checkboxLabel = {
 const checkbox = {
   width: 18,
   height: 18,
-  accentColor: "#6b7c4e",
+  accentColor: "#687E50",
   cursor: "pointer",
 }
 
@@ -568,12 +553,12 @@ const uploadBox = {
 }
 
 const uploadBoxActive = {
-  borderColor: "#6b7c4e",
+  borderColor: "#687E50",
   background: "#f5f7f2",
 }
 
 const uploadBoxHasFile = {
-  borderColor: "#6b7c4e",
+  borderColor: "#687E50",
   background: "#f5f7f2",
 }
 
@@ -610,14 +595,14 @@ const uploadSubtext = {
 
 const fileName = {
   fontSize: 12,
-  color: "#6b7c4e",
+  color: "#687E50",
   margin: "8px 0 0 0",
   fontWeight: 500,
 }
 
 const infoBox = {
   background: "#f0f4ec",
-  border: "1px solid #6b7c4e",
+  border: "1px solid #687E50",
   color: "#4a5a3a",
   padding: "12px 16px",
   borderRadius: 8,
@@ -648,7 +633,7 @@ const btnCancel = {
 }
 
 const btnSave = {
-  background: "#6b7c4e",
+  background: "#687E50",
   color: "white",
   padding: "8px 20px",
   border: "none",

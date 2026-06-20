@@ -3,6 +3,7 @@
   import { useState, useEffect } from "react"
   import { useRouter, useParams } from "next/navigation"
   import Link from "next/link"
+  import AdminLayout from "@/components/AdminLayout"
 
   interface Post {
     id: number
@@ -46,7 +47,13 @@
       if (!confirm("Yakin ingin menghapus artikel ini?")) return
 
       try {
-        const res = await fetch(`${api}/api/posts/${params.id}`, { method: "DELETE" })
+        const token = localStorage.getItem("token")
+        const res = await fetch(`${api}/api/posts/${params.id}`, {
+          method: "DELETE",
+          headers: {
+            "Authorization": token ? `Bearer ${token}` : "",
+          }
+        })
         if (!res.ok) throw new Error("Gagal menghapus")
         
         alert("Artikel dihapus!")
@@ -66,49 +73,33 @@
       })
     }
 
-    if (loading) return <div style={pageWrapper}><p style={{padding: 20}}>Loading...</p></div>
+    if (loading) return <AdminLayout><p style={{padding: 20}}>Loading...</p></AdminLayout>
     
     if (error) return (
-      <div style={pageWrapper}>
+      <AdminLayout>
         <div style={mainContent}>
           <div style={errorBox}>{error}</div>
           <button style={btnBack} onClick={() => router.push("/admin/artikel")}>
             ← Kembali ke Daftar Artikel
           </button>
         </div>
-      </div>
+      </AdminLayout>
     )
 
     if (!post) return (
-      <div style={pageWrapper}>
+      <AdminLayout>
         <div style={mainContent}>
           <div style={errorBox}>Artikel tidak ditemukan</div>
           <button style={btnBack} onClick={() => router.push("/admin/artikel")}>
             ← Kembali ke Daftar Artikel
           </button>
         </div>
-      </div>
+      </AdminLayout>
     )
 
     return (
-      <div style={pageWrapper}>
-        {/* Header */}
-        <header style={header}>
-          <button style={menuButton}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
-          </button>
-          <h1 style={headerTitle}>Admin BK</h1>
-          <div style={userIcon}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-              <circle cx="12" cy="8" r="4" />
-              <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-            </svg>
-          </div>
-        </header>
+      <AdminLayout>
+        {/* Main Content */}
 
         {/* Main Content */}
         <main style={mainContent}>
@@ -156,7 +147,7 @@
             {/* Tanggal */}
             <div style={metaInfo}>
               <span style={metaItem}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7c4e" strokeWidth="2" strokeLinecap="round" style={{marginRight: 4}}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#687E50" strokeWidth="2" strokeLinecap="round" style={{marginRight: 4}}>
                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                   <line x1="16" y1="2" x2="16" y2="6" />
                   <line x1="8" y1="2" x2="8" y2="6" />
@@ -165,7 +156,7 @@
                 Dipublikasikan: {formatDate(post.publishedAt)}
               </span>
               <span style={metaItem}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7c4e" strokeWidth="2" strokeLinecap="round" style={{marginRight: 4}}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#687E50" strokeWidth="2" strokeLinecap="round" style={{marginRight: 4}}>
                   <circle cx="12" cy="12" r="10" />
                   <polyline points="12 6 12 12 16 14" />
                 </svg>
@@ -209,7 +200,7 @@
             </button>
           </div>
         </main>
-      </div>
+      </AdminLayout>
     )
   }
 
@@ -222,7 +213,7 @@
   }
 
   const header = {
-    background: "#6b7c4e",
+    background: "#687E50",
     padding: "16px 20px",
     display: "flex",
     alignItems: "center",
@@ -289,7 +280,7 @@
 
   const btnBack = {
     background: "transparent",
-    color: "#6b7c4e",
+    color: "#687E50",
     border: "none",
     padding: "8px 0",
     fontSize: 14,

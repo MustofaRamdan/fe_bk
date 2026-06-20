@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Editor from "@/components/Editor"
+import AdminLayout from "@/components/AdminLayout"
 
 export default function NewPost() {
   const api = process.env.NEXT_PUBLIC_API_URL
@@ -49,29 +50,33 @@ export default function NewPost() {
 
     try {
       let thumbnailUrl = ""
+      const token = localStorage.getItem("token")
 
       // Upload thumbnail jika ada
       if (thumbnail) {
-        console.log("📤 Uploading thumbnail...")
+        console.log("ðŸ“¤ Uploading thumbnail...")
         const formData = new FormData()
         formData.append("file", thumbnail)
 
         const uploadRes = await fetch(`${api}/api/upload`, {
           method: "POST",
+          headers: {
+            "Authorization": token ? `Bearer ${token}` : "",
+          },
           body: formData
         })
 
-        console.log("📤 Upload status:", uploadRes.status)
+        console.log("ðŸ“¤ Upload status:", uploadRes.status)
 
         if (!uploadRes.ok) {
           const uploadErr = await uploadRes.text()
-          console.error("❌ Upload gagal:", uploadErr)
+          console.error("â Œ Upload gagal:", uploadErr)
           throw new Error("Gagal mengunggah thumbnail: " + uploadErr)
         }
 
         const uploadData = await uploadRes.json()
         thumbnailUrl = uploadData.url
-        console.log("✅ Upload sukses:", thumbnailUrl)
+        console.log("âœ… Upload sukses:", thumbnailUrl)
       }
 
       // Data yang akan dikirim
@@ -81,21 +86,22 @@ export default function NewPost() {
         thumbnail: thumbnailUrl,
         publishedAt: date || undefined,
       }
-      console.log("📦 PAYLOAD:", payload)
+      console.log("ðŸ“¦ PAYLOAD:", payload)
 
       // Simpan artikel ke database
       const res = await fetch(`${api}/api/posts`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": token ? `Bearer ${token}` : "",
         },
         body: JSON.stringify(payload)
       })
 
-      console.log("📥 Response status:", res.status)
+      console.log("ðŸ“¥ Response status:", res.status)
       
       const responseText = await res.text()
-      console.log("📥 Response text:", responseText)
+      console.log("ðŸ“¥ Response text:", responseText)
 
       let data
       try {
@@ -108,12 +114,12 @@ export default function NewPost() {
         throw new Error(data.error || data.detail || `HTTP ${res.status}: ${responseText}`)
       }
 
-      console.log("✅ SUKSES:", data)
+      console.log("âœ… SUKSES:", data)
       alert("Artikel berhasil disimpan!")
       router.push("/artikel")
 
     } catch (err: any) {
-      console.error("💥 FRONTEND ERROR:", err)
+      console.error("ðŸ’¥ FRONTEND ERROR:", err)
       setError(err.message || "Terjadi kesalahan")
       setDebugInfo(`Detail: ${err.message}`)
     } finally {
@@ -128,25 +134,7 @@ export default function NewPost() {
   }
 
   return (
-    <div style={pageWrapper}>
-      {/* Header */}
-      <header style={header}>
-        <button style={menuButton}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-        </button>
-        <h1 style={headerTitle}>Admin BK</h1>
-        <div style={userIcon}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-            <circle cx="12" cy="8" r="4" />
-            <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-          </svg>
-        </div>
-      </header>
-
+    <AdminLayout>
       {/* Main Content */}
       <main style={mainContent}>
         <div style={titleSection}>
@@ -267,7 +255,7 @@ export default function NewPost() {
           </form>
         </div>
       </main>
-    </div>
+    </AdminLayout>
   )
 }
 
@@ -279,7 +267,7 @@ const pageWrapper = {
 }
 
 const header = {
-  background: "#6b7c4e",
+  background: "#687E50",
   padding: "16px 20px",
   display: "flex",
   alignItems: "center",
@@ -432,12 +420,12 @@ const uploadBox = {
 }
 
 const uploadBoxActive = {
-  borderColor: "#6b7c4e",
+  borderColor: "#687E50",
   background: "#f5f7f2",
 }
 
 const uploadBoxHasFile = {
-  borderColor: "#6b7c4e",
+  borderColor: "#687E50",
   background: "#f5f7f2",
 }
 
@@ -474,7 +462,7 @@ const uploadSubtext = {
 
 const fileName = {
   fontSize: 12,
-  color: "#6b7c4e",
+  color: "#687E50",
   margin: "8px 0 0 0",
   fontWeight: 500,
 }
@@ -499,7 +487,7 @@ const btnCancel = {
 }
 
 const btnSave = {
-  background: "#6b7c4e",
+  background: "#687E50",
   color: "white",
   padding: "8px 20px",
   border: "none",

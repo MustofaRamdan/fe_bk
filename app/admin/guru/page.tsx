@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import AdminLayout from "@/components/AdminLayout"
 
 type Guru = {
   id: number
@@ -41,7 +42,13 @@ export default function GuruPage() {
   const handleDelete = async (id: number) => {
     if (!confirm("Yakin hapus?")) return
     try {
-      await fetch(`${api}/api/guru/${id}`, { method: "DELETE" })
+      const token = localStorage.getItem("token")
+      await fetch(`${api}/api/guru/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": token ? `Bearer ${token}` : "",
+        }
+      })
       fetchGuru()
     } catch (err) {
       console.error(err)
@@ -50,37 +57,20 @@ export default function GuruPage() {
 
   if (loading) {
     return (
-      <div style={pageWrapper}>
-        <header style={header}><h1 style={headerTitle}>Admin BK</h1></header>
+      <AdminLayout>
         <main style={mainContent}>
           <p style={{ padding: 40, textAlign: "center", color: "#666" }}>Loading...</p>
         </main>
-      </div>
+      </AdminLayout>
     )
   }
 
   return (
-    <div style={pageWrapper}>
+    <AdminLayout>
       {/* Inject CSS untuk media query */}
       <style dangerouslySetInnerHTML={{ __html: responsiveStyles }} />
 
-      {/* Header */}
-      <header style={header}>
-        <button style={menuButton}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-        </button>
-        <h1 style={headerTitle}>Admin BK</h1>
-        <div style={userIcon}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-            <circle cx="12" cy="8" r="4" />
-            <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-          </svg>
-        </div>
-      </header>
+      {/* Main Content */}
 
       {/* Main Content */}
       <main style={mainContent}>
@@ -111,7 +101,7 @@ export default function GuruPage() {
               </svg>
             </span>
           </div>
-          <button style={btnAdd} onClick={() => router.push("/guru/tambah")}>
+          <button style={btnAdd} onClick={() => router.push("/admin/guru/tambah")}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
               <line x1="12" y1="5" x2="12" y2="19" />
               <line x1="5" y1="12" x2="19" y2="12" />
@@ -168,7 +158,7 @@ export default function GuruPage() {
 
                   {/* Actions */}
                   <div style={cardActions}>
-                    <button style={btnEdit} onClick={() => router.push(`/guru/edit/${g.id}`)}>
+                    <button style={btnEdit} onClick={() => router.push(`/admin/guru/edit/${g.id}`)}>
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
@@ -191,7 +181,7 @@ export default function GuruPage() {
           </div>
         )}
       </main>
-    </div>
+    </AdminLayout>
   )
 }
 
@@ -226,7 +216,7 @@ const pageWrapper = {
 }
 
 const header = {
-  background: "#6b7c4e",
+  background: "#687E50",
   padding: "16px 20px",
   display: "flex",
   alignItems: "center",
@@ -333,7 +323,7 @@ const searchIcon = {
 }
 
 const btnAdd = {
-  background: "#6b7c4e",
+  background: "#687E50",
   color: "white",
   padding: "10px 14px",
   border: "none",
@@ -377,7 +367,7 @@ const kelasBadge = {
   position: "absolute" as const,
   bottom: 6,
   left: 6,
-  background: "rgba(107, 124, 78, 0.9)",
+  background: "rgba(104, 126, 80, 0.9)",
   color: "white",
   padding: "3px 8px",
   borderRadius: 20,

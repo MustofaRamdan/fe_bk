@@ -7,7 +7,7 @@ import Image from "next/image";
 
 export default function AnimatedLogin() {
   const [showLogin, setShowLogin] = useState(false);
-  const [email, setEmail] = useState("");
+  const [nip, setNip] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -32,7 +32,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email,
+          nip,
           password,
         }),
       }
@@ -46,10 +46,11 @@ const handleSubmit = async (e: React.FormEvent) => {
       return;
     }
 
+    document.cookie = `token=${data.token}; path=/; max-age=86400; SameSite=Lax`;
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(data.user));
 
-    router.push("/dashboard");
+    router.push("/admin");
     router.refresh();
   } catch {
     setError("Terjadi kesalahan. Silakan coba lagi.");
@@ -261,9 +262,9 @@ const handleSubmit = async (e: React.FormEvent) => {
                     </svg>
                     <input
                       type="text"
-                      placeholder="Username"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="NIP"
+                      value={nip}
+                      onChange={(e) => setNip(e.target.value)}
                       className="w-full rounded-2xl bg-gray-100 py-4 pl-14 pr-4 text-lg text-gray-700 outline-none transition-all focus:bg-white focus:ring-2 focus:ring-[#C5D5A8]"
                       required
                     />

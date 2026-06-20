@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import AdminLayout from "@/components/AdminLayout"
 
 interface Konseling {
   id: number
@@ -38,7 +39,12 @@ export default function AdminKonselingPage() {
 
   const fetchData = async () => {
     try {
-      const res = await fetch(`${api}/api/konseling`)
+      const token = localStorage.getItem("token")
+      const res = await fetch(`${api}/api/konseling`, {
+        headers: {
+          "Authorization": token ? `Bearer ${token}` : "",
+        }
+      })
       const json = await res.json()
       if (res.ok) setData(json.data)
     } catch (err) {
@@ -65,9 +71,13 @@ export default function AdminKonselingPage() {
 
     setSending(true)
     try {
+      const token = localStorage.getItem("token")
       const res = await fetch(`${api}/api/konseling/${selected.id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": token ? `Bearer ${token}` : "",
+        },
         body: JSON.stringify({ jawaban })
       })
 
@@ -113,16 +123,15 @@ export default function AdminKonselingPage() {
 
   if (loading) {
     return (
-      <div style={pageWrapper}>
-        <Header />
+      <AdminLayout>
         <main style={mainContent}><p style={{padding: 40, textAlign: "center"}}>Loading...</p></main>
-      </div>
+      </AdminLayout>
     )
   }
 
   return (
-    <div style={pageWrapper}>
-      <Header />
+    <AdminLayout>
+      {/* Main Content */}
 
       <main style={mainContent}>
         {/* Title */}
@@ -210,8 +219,8 @@ export default function AdminKonselingPage() {
                             </p>
                           )}
                           {item.email && (
-                            <p style={{margin: "2px 0 0", fontSize: 11, color: "#6b7c4e"}}>
-                              📧 {item.email}
+                            <p style={{margin: "2px 0 0", fontSize: 11, color: "#687E50"}}>
+                              ðŸ“§ {item.email}
                             </p>
                           )}
                         </div>
@@ -261,7 +270,7 @@ export default function AdminKonselingPage() {
               <h3 style={modalTitle}>
                 {selected.status === "SELESAI" ? "Detail Jawaban" : "Jawab Konseling"}
               </h3>
-              <button style={modalClose} onClick={closeModal}>✕</button>
+              <button style={modalClose} onClick={closeModal}>âœ•</button>
             </div>
 
             {/* Modal Body */}
@@ -327,7 +336,7 @@ export default function AdminKonselingPage() {
                     />
                     {selected.inginJawabanEmail && selected.email && (
                       <p style={emailNotice}>
-                        ℹ️ Jawaban akan dikirim ke email: {selected.email}
+                        â„¹ï¸ Jawaban akan dikirim ke email: {selected.email}
                       </p>
                     )}
                   </>
@@ -351,29 +360,7 @@ export default function AdminKonselingPage() {
           </div>
         </div>
       )}
-    </div>
-  )
-}
-
-// ==================== HEADER ====================
-function Header() {
-  return (
-    <header style={header}>
-      <button style={menuButton}>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-          <line x1="3" y1="6" x2="21" y2="6" />
-          <line x1="3" y1="12" x2="21" y2="12" />
-          <line x1="3" y1="18" x2="21" y2="18" />
-        </svg>
-      </button>
-      <h1 style={headerTitle}>Admin BK</h1>
-      <div style={userIcon}>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-          <circle cx="12" cy="8" r="4" />
-          <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-        </svg>
-      </div>
-    </header>
+    </AdminLayout>
   )
 }
 
@@ -386,7 +373,7 @@ const pageWrapper = {
 }
 
 const header = {
-  background: "#6b7c4e",
+  background: "#687E50",
   padding: "16px 20px",
   display: "flex",
   alignItems: "center",
@@ -508,9 +495,9 @@ const filterBtn = {
 }
 
 const filterBtnActive = {
-  background: "#6b7c4e",
+  background: "#687E50",
   color: "white",
-  borderColor: "#6b7c4e",
+  borderColor: "#687E50",
 }
 
 // Table
@@ -605,7 +592,7 @@ const statusSelesai = {
 
 // Buttons
 const btnJawab = {
-  background: "#6b7c4e",
+  background: "#687E50",
   color: "white",
   padding: "6px 14px",
   border: "none",
@@ -697,7 +684,7 @@ const modalSection = {
 const modalSectionTitle = {
   fontSize: 14,
   fontWeight: 700,
-  color: "#6b7c4e",
+  color: "#687E50",
   margin: "0 0 12px 0",
 }
 
@@ -723,7 +710,7 @@ const infoValue = {
 const topikBadge = {
   display: "inline-block",
   background: "#f0f4e8",
-  color: "#6b7c4e",
+  color: "#687E50",
   padding: "4px 12px",
   borderRadius: 8,
   fontSize: 12,
@@ -763,7 +750,7 @@ const modalTextarea = {
 
 const emailNotice = {
   fontSize: 12,
-  color: "#6b7c4e",
+  color: "#687E50",
   margin: "8px 0 0 0",
   background: "#f0f4e8",
   padding: "8px 12px",
@@ -790,7 +777,7 @@ const btnCancel = {
 }
 
 const btnSubmit = {
-  background: "#6b7c4e",
+  background: "#687E50",
   color: "white",
   padding: "10px 24px",
   border: "none",

@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import DesktopLayout from "@/components/DesktopLayout"
 
 const STATUS_OPTIONS = [
   { value: "", label: "Pilih status saat ini" },
@@ -47,6 +48,7 @@ export default function TambahAlumniPage() {
   const router = useRouter()
   const [namaLengkap, setNamaLengkap] = useState("")
   const [tahunLulus, setTahunLulus] = useState("")
+
   const [status, setStatus] = useState("")
   // Kuliah
   const [namaKampus, setNamaKampus] = useState("")
@@ -288,24 +290,7 @@ export default function TambahAlumniPage() {
   }
 
   return (
-    <div style={pageWrapper}>
-      {/* Header */}
-      <header style={header}>
-        <button style={menuButton}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-        </button>
-        <h1 style={headerTitle}>Admin BK</h1>
-        <div style={userIcon}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-            <circle cx="12" cy="8" r="4" />
-            <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-          </svg>
-        </div>
-      </header>
+    <DesktopLayout>
 
       {/* Main Content */}
       <main style={mainContent}>
@@ -436,7 +421,7 @@ export default function TambahAlumniPage() {
           </form>
         </div>
       </main>
-    </div>
+    </DesktopLayout>
   )
 }
 
@@ -448,7 +433,7 @@ const pageWrapper = {
 }
 
 const header = {
-  background: "#6b7c4e",
+  background: "#687E50",
   padding: "16px 20px",
   display: "flex",
   alignItems: "center",
@@ -612,12 +597,12 @@ const uploadBox = {
 }
 
 const uploadBoxActive = {
-  borderColor: "#6b7c4e",
+  borderColor: "#687E50",
   background: "#f5f7f2",
 }
 
 const uploadBoxHasFile = {
-  borderColor: "#6b7c4e",
+  borderColor: "#687E50",
   background: "#f5f7f2",
 }
 
@@ -654,7 +639,7 @@ const uploadSubtext = {
 
 const fileName = {
   fontSize: 12,
-  color: "#6b7c4e",
+  color: "#687E50",
   margin: "8px 0 0 0",
   fontWeight: 500,
 }
@@ -679,7 +664,7 @@ const btnCancel = {
 }
 
 const btnSave = {
-  background: "#6b7c4e",
+  background: "#687E50",
   color: "white",
   padding: "8px 20px",
   border: "none",

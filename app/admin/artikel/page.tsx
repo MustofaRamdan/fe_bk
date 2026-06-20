@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import AdminLayout from "@/components/AdminLayout"
 
 const getPreviewHTML = (html: string) => {
   // hapus gambar dari konten
@@ -45,14 +46,19 @@ export default function ArtikelPage() {
       setLoading(false)
     }
   }
-
   const handleDelete = async (id: number) => {
     if (!confirm("Yakin ingin menghapus artikel ini?")) return
 
     try {
+      const token = localStorage.getItem("token")
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/posts/${id}`,
-        { method: "DELETE" }
+        { 
+          method: "DELETE",
+          headers: {
+            "Authorization": token ? `Bearer ${token}` : "",
+          }
+        }
       )
       if (!res.ok) throw new Error("Gagal menghapus")
       
@@ -62,7 +68,6 @@ export default function ArtikelPage() {
       alert(err.message)
     }
   }
-
   const filteredPosts = posts.filter(p => 
     p.title.toLowerCase().includes(search.toLowerCase())
   )
@@ -82,28 +87,10 @@ export default function ArtikelPage() {
     return content.substring(0, maxLength) + "..."
   }
 
-  if (loading) return <div style={pageWrapper}><p style={{padding: 20}}>Loading...</p></div>
+  if (loading) return <AdminLayout><p style={{padding: 20}}>Loading...</p></AdminLayout>
 
   return (
-    <div style={pageWrapper}>
-      {/* Header */}
-      <header style={header}>
-        <button style={menuButton}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-        </button>
-        <h1 style={headerTitle}>Admin BK</h1>
-        <div style={userIcon}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-            <circle cx="12" cy="8" r="4" />
-            <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-          </svg>
-        </div>
-      </header>
-
+    <AdminLayout>
       {/* Main Content */}
       <main style={mainContent}>
         {/* Title & Breadcrumb */}
@@ -206,7 +193,7 @@ export default function ArtikelPage() {
           )}
         </div>
       </main>
-    </div>
+    </AdminLayout>
   )
 }
 
@@ -218,7 +205,7 @@ const pageWrapper = {
 }
 
 const header = {
-  background: "#6b7c4e",
+  background: "#687E50",
   padding: "16px 20px",
   display: "flex",
   alignItems: "center",
@@ -325,7 +312,7 @@ const searchIcon = {
 }
 
 const btnAdd = {
-  background: "#6b7c4e",
+  background: "#687E50",
   color: "white",
   padding: "10px 16px",
   border: "none",

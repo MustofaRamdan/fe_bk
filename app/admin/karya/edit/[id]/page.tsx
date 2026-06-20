@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter, useParams } from "next/navigation"
+import AdminLayout from "@/components/AdminLayout"
 
 const KELAS_OPTIONS = ["X", "XI", "XII"]
 const JURUSAN_OPTIONS = ["RPL", "BR", "AKL", "MP"]
@@ -28,7 +29,10 @@ export default function EditKaryaPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`${api}/api/karya/${id}`)
+        const token = localStorage.getItem("token")
+        const res = await fetch(`${api}/api/karya/${id}`, {
+          headers: token ? { "Authorization": `Bearer ${token}` } : {}
+        })
         const json = await res.json()
         
         if (!res.ok) throw new Error(json.error || "Gagal mengambil data")
@@ -80,6 +84,7 @@ export default function EditKaryaPage() {
     setError("")
 
     try {
+      const token = localStorage.getItem("token")
       let thumbnailUrl = thumbnailLama
 
       // Upload thumbnail baru kalau ada
@@ -89,6 +94,7 @@ export default function EditKaryaPage() {
 
         const uploadRes = await fetch(`${api}/api/upload`, {
           method: "POST",
+          headers: token ? { "Authorization": `Bearer ${token}` } : {},
           body: formData
         })
 
@@ -99,9 +105,12 @@ export default function EditKaryaPage() {
       }
 
       // Update data karya
+      const headers: Record<string, string> = { "Content-Type": "application/json" }
+      if (token) headers["Authorization"] = `Bearer ${token}`
+
       const res = await fetch(`${api}/api/karya/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({
           judul,
           deskripsi,
@@ -120,7 +129,7 @@ export default function EditKaryaPage() {
       }
 
       alert("Karya berhasil diupdate!")
-      router.push("/karya")
+      router.push("/admin/karya")
 
     } catch (err: any) {
       setError(err.message || "Terjadi kesalahan")
@@ -137,34 +146,16 @@ export default function EditKaryaPage() {
   }
 
   return (
-    <div style={pageWrapper}>
-      {/* Header */}
-      <header style={header}>
-        <button style={menuButton}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-        </button>
-        <h1 style={headerTitle}>Admin BK</h1>
-        <div style={userIcon}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-            <circle cx="12" cy="8" r="4" />
-            <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-          </svg>
-        </div>
-      </header>
-
+    <AdminLayout>
       {/* Main Content */}
       <main style={mainContent}>
         {/* Title & Breadcrumb */}
         <div style={titleSection}>
           <h2 style={pageTitle}>Edit Karya Siswa</h2>
           <nav style={breadcrumb}>
-            <span style={breadcrumbItem}>Dashboard</span>
+            <span style={breadcrumbItem} onClick={() => router.push("/admin")}>Dashboard</span>
             <span style={breadcrumbSeparator}>&rsaquo;</span>
-            <span style={breadcrumbItem}>Karya Siswa</span>
+            <span style={breadcrumbItem} onClick={() => router.push("/admin/karya")}>Karya Siswa</span>
             <span style={breadcrumbSeparator}>&rsaquo;</span>
             <span style={breadcrumbActive}>Edit Karya Siswa</span>
           </nav>
@@ -358,7 +349,7 @@ export default function EditKaryaPage() {
           </form>
         </div>
       </main>
-    </div>
+    </AdminLayout>
   )
 }
 
@@ -370,7 +361,7 @@ const pageWrapper = {
 }
 
 const header = {
-  background: "#6b7c4e",
+  background: "#687E50",
   padding: "16px 20px",
   display: "flex",
   alignItems: "center",
@@ -546,12 +537,12 @@ const uploadBox = {
 }
 
 const uploadBoxActive = {
-  borderColor: "#6b7c4e",
+  borderColor: "#687E50",
   background: "#f5f7f2",
 }
 
 const uploadBoxHasFile = {
-  borderColor: "#6b7c4e",
+  borderColor: "#687E50",
   background: "#f5f7f2",
 }
 
@@ -588,7 +579,7 @@ const uploadSubtext = {
 
 const fileName = {
   fontSize: 12,
-  color: "#6b7c4e",
+  color: "#687E50",
   margin: "8px 0 0 0",
   fontWeight: 500,
 }
@@ -613,7 +604,7 @@ const btnCancel = {
 }
 
 const btnSave = {
-  background: "#6b7c4e",
+  background: "#687E50",
   color: "white",
   padding: "8px 20px",
   border: "none",

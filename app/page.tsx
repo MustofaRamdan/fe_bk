@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import Drawer from "@/components/Drawer"
+import DesktopLayout from "@/components/DesktopLayout"
 // ============================================
 // INTERFACES — sesuai response backend Golang
 // ============================================
@@ -56,7 +56,8 @@ export default function Homepage() {
   const [data, setData] = useState<HomepageData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
-  const [drawerOpen, setDrawerOpen] = useState(false)
+
+  const [searchQuery, setSearchQuery] = useState("")
 
   useEffect(() => {
     fetchData()
@@ -90,345 +91,354 @@ export default function Homepage() {
     return `${api}${path}`
   }
 
+
+
   if (loading) {
     return (
-      <div style={pageWrapper}>
-        <header style={header}>
-          <button style={menuButton} onClick={() => setDrawerOpen(true)}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
-          </button>
-          <h1 style={headerTitle}>Admin BK</h1>
-          <div style={userIcon}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-              <circle cx="12" cy="8" r="4" />
-              <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-            </svg>
-          </div>
-        </header>
+      <DesktopLayout>
         <div style={{ textAlign: "center", padding: 60 }}>Loading...</div>
-      </div>
+      </DesktopLayout>
     )
   }
 
   if (error) {
     return (
-      <div style={pageWrapper}>
-        <header style={header}>
-          <button
-  style={menuButton}
-  onClick={() => setDrawerOpen(true)}
->
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
-          </button>
-          <h1 style={headerTitle}>Admin BK</h1>
-          <div style={userIcon}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-              <circle cx="12" cy="8" r="4" />
-              <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-            </svg>
-          </div>
-        </header>
+      <DesktopLayout>
         <div style={{ textAlign: "center", padding: 60, color: "#dc2626" }}>
           Error: {error}
         </div>
-      </div>
+      </DesktopLayout>
     )
   }
 
   if (!data) return null
 
   return (
-    <div style={pageWrapper}>
-      {/* ============================================
-          HEADER
-      ============================================ */}
-      <header style={header}>
-        <button
-  style={menuButton}
-  onClick={() => setDrawerOpen(true)}
->
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-        </button>
-        <h1 style={headerTitle}>Admin BK</h1>
-        <div style={userIcon}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-            <circle cx="12" cy="8" r="4" />
-            <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-          </svg>
-        </div>
-      </header>
+    <DesktopLayout>
 
-      {/* ============================================
-          HERO BANNER — Artikel Terbaru (REAL)
-      ============================================ */}
-      {data.hero && (
-        <div
-          style={heroBanner}
-          onClick={() => router.push(`/artikel/${data.hero?.id}`)}
-        >
-          {data.hero.thumbnail ? (
-            <img
-              src={formatImageUrl(data.hero.thumbnail)}
-              alt={data.hero.title}
-              style={heroImage}
-            />
-          ) : (
-            <div style={heroImagePlaceholder}>
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#6b7c4e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                <circle cx="8.5" cy="8.5" r="1.5" />
-                <polyline points="21 15 16 10 5 21" />
-              </svg>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* ============================================
-          SELAMAT DATANG
-      ============================================ */}
-      <section style={welcomeSection}>
-        <p style={welcomeSmall}>SELAMAT DATANG DI WEBSITE</p>
-        <h2 style={welcomeTitle}>
-          BIMBINGAN
-          <br />
-          KONSELING
-        </h2>
-        <p style={welcomeSubtitle}>SMK NEGERI 12 JAKARTA</p>
-
-        <p style={welcomeDesc}>
-          Bimbingan dan Konseling (BK) di SMKN 12 Jakarta merupakan layanan yang membantu peserta didik dalam mengembangkan potensi diri secara optimal, baik dalam bidang pribadi, sosial, belajar, maupun karir. Layanan BK juga membantu siswa dalam mengatasi masalah yang dihadapi serta merencanakan masa depan yang lebih baik.
-        </p>
-
-        <div style={welcomeButtons}>
-          <button style={btnPrimary} onClick={() => router.push("/artikel")}>
-            Lihat Artikel
-          </button>
-          <button style={btnSecondary}>Konseling</button>
-        </div>
-      </section>
-
-      {/* ============================================
-          GURU BK — Data Real dari Backend
-      ============================================ */}
-      <section style={guruSection}>
-        <p style={guruLabel}>Guru Bimbingan Konseling</p>
-        <p style={guruSublabel}>SMK Negeri 12 Jakarta</p>
-
-        <div style={guruList}>
-          {data.guru.length === 0 ? (
-            <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 12 }}>
-              Belum ada data guru
-            </p>
-          ) : (
-            data.guru.map((g) => (
-              <div key={g.id} style={guruCard}>
+        {/* ============================================
+            HERO BANNER — Multiple Images
+        ============================================ */}
+        <div data-hero style={heroBanner}>
+          <div style={heroGrid}>
+            {data.hero && data.hero.thumbnail ? (
+              <div
+                style={heroMainImage}
+                onClick={() => router.push(`/artikel/${data.hero?.id}`)}
+              >
                 <img
-                  src={formatImageUrl(g.foto)}
-                  alt={g.nama}
-                  style={guruFoto}
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = "/no-image.png"
-                  }}
+                  src={formatImageUrl(data.hero.thumbnail)}
+                  alt={data.hero.title}
+                  style={heroImg}
                 />
-                <p style={guruName}>{g.nama}</p>
-                <p style={guruJabatan}>{g.jabatan}</p>
               </div>
-            ))
-          )}
-        </div>
-      </section>
-
-      {/* ============================================
-          KARYA SISWA — Data Real dari Backend
-      ============================================ */}
-      <section style={karyaSection}>
-        <div style={sectionHeader}>
-          <h3 style={sectionTitle}>Karya Siswa</h3>
-          <button style={btnLihatSemua} onClick={() => router.push("/karya")}>Lihat Semua ›</button>
-        </div>
-
-        <div style={karyaGrid}>
-          {data.karya.length === 0 ? (
-            <p style={{ color: "#999", fontSize: 12, gridColumn: "1 / -1" }}>
-              Belum ada karya siswa
-            </p>
-          ) : (
-            data.karya.slice(0, 2).map((k) => (
-              <div key={k.id} style={karyaCard}>
-                {k.thumbnail ? (
+            ) : (
+              <div style={heroPlaceholderBox}>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#687E50" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                  <circle cx="8.5" cy="8.5" r="1.5" />
+                  <polyline points="21 15 16 10 5 21" />
+                </svg>
+              </div>
+            )}
+            {/* Additional hero images from artikel */}
+            {data.artikel.slice(0, 2).map((item) => (
+              <div
+                key={item.id}
+                style={heroSideImage}
+                onClick={() => router.push(`/artikel/${item.id}`)}
+              >
+                {item.thumbnail ? (
                   <img
-                    src={formatImageUrl(k.thumbnail)}
-                    alt={k.judul}
-                    style={karyaImage}
+                    src={formatImageUrl(item.thumbnail)}
+                    alt={item.title}
+                    style={heroImg}
                   />
                 ) : (
-                  <div style={karyaImagePlaceholder}>
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#6b7c4e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <div style={heroPlaceholderBox}>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#687E50" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
                       <circle cx="8.5" cy="8.5" r="1.5" />
                       <polyline points="21 15 16 10 5 21" />
                     </svg>
                   </div>
                 )}
-                <p style={karyaTitle}>{k.judul}</p>
               </div>
-            ))
-          )}
-        </div>
-
-        <button style={btnTambahKarya}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          Tambah Karya Siswa
-        </button>
-      </section>
-
-      {/* ============================================
-          TOTAL ALUMNI — Data Real
-      ============================================ */}
-      <section style={alumniSection}>
-        <p style={alumniLabel}>Total Alumni</p>
-        <p style={alumniValue}>{data.totalAlumni}</p>
-        <p style={alumniSublabel}>Terdaftar</p>
-      </section>
-
-      {/* ============================================
-          STATS KARIR ALUMNI — Data Real
-      ============================================ */}
-      <section style={statsSection}>
-        {/* KULIAH */}
-        <div style={statCardLarge}>
-          <div style={statCardContent}>
-            <h4 style={statCardTitle}>Kuliah</h4>
-            <p style={statCardDesc}>
-              Alumni yang melanjutkan studi ke perguruan tinggi
-            </p>
-            <div style={statNumberRow}>
-              <div>
-                <p style={statPercent}>{data.statsKarir.kuliah.persen}%</p>
-                <p style={statSublabel}>{data.statsKarir.kuliah.jumlah} alumni</p>
-              </div>
-              <div style={statIconLarge}>
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#c5d4a8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                  <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
-                </svg>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
 
-        {/* KERJA */}
-        <div style={statCardLarge}>
-          <div style={statCardContent}>
-            <h4 style={statCardTitle}>Kerja</h4>
-            <p style={statCardDesc}>
-              Alumni yang telah bekerja di berbagai perusahaan
-            </p>
-            <div style={statNumberRow}>
-              <div>
-                <p style={statPercent}>{data.statsKarir.kerja.persen}%</p>
-                <p style={statSublabel}>{data.statsKarir.kerja.jumlah} alumni</p>
-              </div>
-              <div style={statIconLarge}>
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#c5d4a8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
-                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-                </svg>
-              </div>
-            </div>
+        {/* ============================================
+            SEARCH BAR
+        ============================================ */}
+        <div data-search style={searchBarWrapper}>
+          <div style={searchBar}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Cari layanan BK, artikel, atau alumni..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={searchInput}
+            />
           </div>
         </div>
 
-        {/* WIRAUSAHA */}
-        <div style={statCardLarge}>
-          <div style={statCardContent}>
-            <h4 style={statCardTitle}>Wirausaha</h4>
-            <p style={statCardDesc}>
-              Alumni yang membangun bisnis sendiri
-            </p>
-            <div style={statNumberRow}>
-              <div>
-                <p style={statPercent}>{data.statsKarir.wirausaha.persen}%</p>
-                <p style={statSublabel}>{data.statsKarir.wirausaha.jumlah} alumni</p>
-              </div>
-              <div style={statIconLarge}>
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#c5d4a8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                  <path d="M2 17l10 5 10-5" />
-                  <path d="M2 12l10 5 10-5" />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+        {/* ============================================
+            SELAMAT DATANG
+        ============================================ */}
+        <section style={welcomeSection}>
+          <p style={welcomeSmall}>SELAMAT DATANG DI WEBSITE</p>
+          <h2 style={welcomeTitle}>
+            BIMBINGAN
+            <br />
+            KONSELING
+          </h2>
+          <p style={welcomeSubtitle}>SMK NEGERI 12 JAKARTA</p>
 
-      {/* ============================================
-          ARTIKEL — Data Real (2 terbaru)
-      ============================================ */}
-      <section style={artikelSection}>
-        <div style={sectionHeader}>
-          <h3 style={sectionTitle}>Artikel</h3>
-          <button style={btnLihatSemua} onClick={() => router.push("/artikel")}>
-            Lihat Semua ›
-          </button> 
-        </div>
+          <p style={welcomeDesc}>
+            Bimbingan dan Konseling (BK) di SMKN 12 Jakarta merupakan layanan yang membantu peserta didik dalam mengembangkan potensi diri secara optimal, baik dalam bidang pribadi, sosial, belajar, maupun karir. Layanan BK juga membantu siswa dalam mengatasi masalah yang dihadapi serta merencanakan masa depan yang lebih baik.
+          </p>
 
-        <div style={artikelGrid}>
-          {data.artikel.slice(0, 2).map((item) => (
-            <div
-              key={item.id}
-              style={artikelCard}
-              onClick={() => router.push(`/artikel/${item.id}`)}
+          <div style={welcomeButtons}>
+            <button style={btnPrimary} onClick={() => router.push("/artikel")}>
+              Lihat Artikel
+            </button>
+            <button 
+              style={{ ...btnSecondary, cursor: "pointer" }}
+              onClick={() => router.push("/konseling")}
             >
-              {item.thumbnail ? (
-                <img
-                  src={formatImageUrl(item.thumbnail)}
-                  alt={item.title}
-                  style={artikelThumb}
-                />
-              ) : (
-                <div style={artikelThumbPlaceholder}>
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#6b7c4e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                    <circle cx="8.5" cy="8.5" r="1.5" />
-                    <polyline points="21 15 16 10 5 21" />
+              Konseling
+            </button>
+          </div>
+        </section>
+
+        {/* ============================================
+            GURU BK — Data Real dari Backend
+        ============================================ */}
+        <section id="guru-section" style={guruSection}>
+          <p style={guruLabel}>Guru Bimbingan Konseling</p>
+          <p style={guruSublabel}>SMK Negeri 12 Jakarta</p>
+
+          <div data-guru-list style={guruList}>
+            {data.guru.length === 0 ? (
+              <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 14 }}>
+                Belum ada data guru
+              </p>
+            ) : (
+              data.guru.map((g) => (
+                <div key={g.id} style={guruCard}>
+                  <img
+                    src={formatImageUrl(g.foto)}
+                    alt={g.nama}
+                    style={guruFoto}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = "/no-image.png"
+                    }}
+                  />
+                  <p style={guruName}>{g.nama}</p>
+                  <p style={guruJabatan}>{g.jabatan}</p>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+
+        {/* ============================================
+            KARYA SISWA — Data Real dari Backend
+        ============================================ */}
+        <section style={karyaSection}>
+          <div style={sectionHeader}>
+            <h3 style={sectionTitle}>Karya Siswa</h3>
+            <button style={btnLihatSemua} onClick={() => router.push("/karya")}>Lihat Semua ›</button>
+          </div>
+
+          <div data-karya-grid style={karyaGrid}>
+            {data.karya.length === 0 ? (
+              <p style={{ color: "#999", fontSize: 14, gridColumn: "1 / -1" }}>
+                Belum ada karya siswa
+              </p>
+            ) : (
+              data.karya.slice(0, 8).map((k) => (
+                <div key={k.id} style={karyaCard}>
+                  {k.thumbnail ? (
+                    <img
+                      src={formatImageUrl(k.thumbnail)}
+                      alt={k.judul}
+                      style={karyaImage}
+                    />
+                  ) : (
+                    <div style={karyaImagePlaceholder}>
+                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#687E50" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <polyline points="21 15 16 10 5 21" />
+                      </svg>
+                    </div>
+                  )}
+                  <p style={karyaTitle}>{k.judul}</p>
+                </div>
+              ))
+            )}
+          </div>
+
+          <button 
+            style={btnTambahKarya}
+            onClick={() => router.push("/karya/tambah")}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Tambah Karya Siswa
+          </button>
+        </section>
+
+        {/* ============================================
+            TOTAL ALUMNI — Data Real
+        ============================================ */}
+        <section style={alumniSection}>
+          <p style={alumniLabel}>Total Alumni</p>
+          <p style={alumniValue}>{data.totalAlumni}</p>
+          <p style={alumniSublabel}>Terdaftar</p>
+        </section>
+
+        {/* ============================================
+            STATS KARIR ALUMNI — Data Real
+        ============================================ */}
+        <section data-stats style={statsSection}>
+          {/* KULIAH */}
+          <div 
+            style={{ ...statCardLarge, cursor: "pointer" }}
+            onClick={() => router.push("/alumni/kuliah")}
+          >
+            <div style={statCardContent}>
+              <h4 style={statCardTitle}>Kuliah</h4>
+              <p style={statCardDesc}>
+                Lorem Ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
+              </p>
+              <div style={statNumberRow}>
+                <div>
+                  <p style={statPercent}>{data.statsKarir.kuliah.persen}%</p>
+                  <p style={statSublabel}>Lorem Ipsum dolor</p>
+                </div>
+                <div style={statIconLarge}>
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#c5d4a8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                    <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
                   </svg>
                 </div>
-              )}
-              <div style={artikelCardContent}>
-                <p style={artikelCardText}>{getPreviewText(item.content, 80)}</p>
-                <button style={btnBacaSelengkapnya}>Baca Selengkapnya</button>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
 
-        <button style={btnLihatSemuaArtikel} onClick={() => router.push("/artikel")}>
-          Untuk lebih banyak artikel
-        </button>
-      </section>
-      <Drawer
-  isOpen={drawerOpen}
-  onClose={() => setDrawerOpen(false)}
-/>
-    </div>
+          {/* KERJA */}
+          <div 
+            style={{ ...statCardLarge, cursor: "pointer" }}
+            onClick={() => router.push("/alumni/bekerja")}
+          >
+            <div style={statCardContent}>
+              <h4 style={statCardTitle}>Kuliah</h4>
+              <p style={statCardDesc}>
+                Lorem Ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
+              </p>
+              <div style={statNumberRow}>
+                <div>
+                  <p style={statPercent}>{data.statsKarir.kerja.persen}%</p>
+                  <p style={statSublabel}>Lorem Ipsum dolor</p>
+                </div>
+                <div style={statIconLarge}>
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#c5d4a8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* WIRAUSAHA */}
+          <div 
+            data-stat-wirausaha
+            style={{ ...statCardLarge, cursor: "pointer" }}
+            onClick={() => router.push("/alumni/wirausaha")}
+          >
+            <div style={statCardContent}>
+              <h4 style={statCardTitle}>Kuliah</h4>
+              <p style={statCardDesc}>
+                Lorem Ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
+              </p>
+              <div style={statNumberRow}>
+                <div>
+                  <p style={statPercent}>{data.statsKarir.wirausaha.persen}%</p>
+                  <p style={statSublabel}>Lorem Ipsum dolor</p>
+                </div>
+                <div style={statIconLarge}>
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#c5d4a8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                    <path d="M2 17l10 5 10-5" />
+                    <path d="M2 12l10 5 10-5" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ============================================
+            ARTIKEL — Data Real (4 terbaru di desktop)
+        ============================================ */}
+        <section style={artikelSection}>
+          <div style={sectionHeader}>
+            <h3 style={sectionTitle}>Artikel</h3>
+            <button style={btnLihatSemua} onClick={() => router.push("/artikel")}>
+              Lihat Semua ›
+            </button>
+          </div>
+
+          <div data-artikel-grid style={artikelGrid}>
+            {data.artikel.slice(0, 4).map((item) => (
+              <div
+                key={item.id}
+                style={artikelCard}
+                onClick={() => router.push(`/artikel/${item.id}`)}
+              >
+                {item.thumbnail ? (
+                  <img
+                    src={formatImageUrl(item.thumbnail)}
+                    alt={item.title}
+                    style={artikelThumb}
+                  />
+                ) : (
+                  <div style={artikelThumbPlaceholder}>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#687E50" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                      <circle cx="8.5" cy="8.5" r="1.5" />
+                      <polyline points="21 15 16 10 5 21" />
+                    </svg>
+                  </div>
+                )}
+                <div style={artikelCardContent}>
+                  <p style={artikelCardText}>{getPreviewText(item.content, 80)}</p>
+                  <button style={btnBacaSelengkapnya}>Baca Selengkapnya</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ============================================
+            FOOTER
+        ============================================ */}
+        <footer data-footer style={footerStyle}>
+          <div style={footerContent}>
+            <p style={footerText}>© 2024 Bimbingan Konseling — SMK Negeri 12 Jakarta</p>
+          </div>
+        </footer>
+    </DesktopLayout>
   )
 }
 
@@ -436,15 +446,107 @@ export default function Homepage() {
 // STYLES
 // ============================================
 
-const pageWrapper = {
+const desktopWrapper: React.CSSProperties = {
+  display: "flex",
+  minHeight: "100vh",
+  background: "#e8e8e8",
+  fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+}
+
+const sidebar: React.CSSProperties = {
+  display: "none",
+  width: 260,
+  background: "#687E50",
+  minHeight: "100vh",
+  padding: "24px 0",
+  flexShrink: 0,
+  position: "fixed",
+  left: 0,
+  top: 0,
+  bottom: 0,
+  zIndex: 50,
+}
+
+const sidebarHeader: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  gap: 12,
+  padding: "0 20px 24px",
+  borderBottom: "1px solid rgba(255,255,255,0.2)",
+  marginBottom: 16,
+}
+
+const sidebarLogo: React.CSSProperties = {
+  width: 40,
+  height: 40,
+  borderRadius: 8,
+  background: "rgba(255,255,255,0.15)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  flexShrink: 0,
+}
+
+const sidebarTitle: React.CSSProperties = {
+  fontSize: 14,
+  fontWeight: 700,
+  color: "white",
+  margin: "0 0 2px 0",
+  lineHeight: 1.2,
+}
+
+const sidebarSubtitle: React.CSSProperties = {
+  fontSize: 11,
+  color: "rgba(255,255,255,0.7)",
+  margin: 0,
+}
+
+const sidebarNav: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  gap: 4,
+  padding: "0 16px",
+}
+
+const sidebarNavItem: React.CSSProperties = {
+  background: "none",
+  border: "none",
+  color: "rgba(255,255,255,0.85)",
+  padding: "12px 16px",
+  borderRadius: 8,
+  fontSize: 14,
+  fontWeight: 500,
+  cursor: "pointer",
+  textAlign: "left",
+  transition: "all 0.2s",
+}
+
+const sidebarNavItemActive: React.CSSProperties = {
+  background: "white",
+  border: "none",
+  color: "#687E50",
+  padding: "12px 16px",
+  borderRadius: 8,
+  fontSize: 14,
+  fontWeight: 600,
+  cursor: "pointer",
+  textAlign: "left",
+}
+
+const mainContent: React.CSSProperties = {
+  flex: 1,
+  minHeight: "100vh",
+}
+
+const pageWrapper: React.CSSProperties = {
   background: "#e8e8e8",
   minHeight: "100vh",
   fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
   paddingBottom: 40,
 }
 
-const header = {
-  background: "#86a564",
+const header: React.CSSProperties = {
+  background: "#687E50",
   padding: "16px 20px",
   display: "flex",
   alignItems: "center",
@@ -452,7 +554,7 @@ const header = {
   color: "white",
 }
 
-const menuButton = {
+const menuButton: React.CSSProperties = {
   background: "none",
   border: "none",
   cursor: "pointer",
@@ -461,14 +563,26 @@ const menuButton = {
   alignItems: "center",
 }
 
-const headerTitle = {
+const headerTitle: React.CSSProperties = {
   fontSize: 18,
   fontWeight: 600,
   margin: 0,
   letterSpacing: "0.5px",
 }
 
-const userIcon = {
+const userInfo: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  gap: 10,
+}
+
+const userName: React.CSSProperties = {
+  fontSize: 14,
+  fontWeight: 500,
+  color: "white",
+}
+
+const userIcon: React.CSSProperties = {
   width: 32,
   height: 32,
   borderRadius: "50%",
@@ -480,23 +594,41 @@ const userIcon = {
 }
 
 // Hero
-const heroBanner = {
+const heroBanner: React.CSSProperties = {
   width: "100%",
-  height: "clamp(220px, 38vw, 420px)",
+  overflow: "hidden",
+  background: "#dfe8cf",
+  position: "relative",
+}
+
+const heroGrid: React.CSSProperties = {
+  display: "flex",
+  gap: 0,
+  height: "clamp(220px, 38vw, 320px)",
+}
+
+const heroMainImage: React.CSSProperties = {
+  flex: 2,
   overflow: "hidden",
   cursor: "pointer",
-  background: "#dfe8cf",
-  position: "relative" as const,
+  position: "relative",
 }
-const heroImage = {
+
+const heroSideImage: React.CSSProperties = {
+  flex: 1,
+  overflow: "hidden",
+  cursor: "pointer",
+  position: "relative",
+}
+
+const heroImg: React.CSSProperties = {
   width: "100%",
   height: "100%",
-  objectFit: "cover" as const,
+  objectFit: "cover",
   display: "block",
 }
 
-
-const heroImagePlaceholder = {
+const heroPlaceholderBox: React.CSSProperties = {
   width: "100%",
   height: "100%",
   background: "#c5d4a8",
@@ -505,180 +637,204 @@ const heroImagePlaceholder = {
   justifyContent: "center",
 }
 
-// Welcome
-const welcomeSection = {
-  padding: "24px 20px",
-  textAlign: "center" as const,
+// Search Bar
+const searchBarWrapper: React.CSSProperties = {
+  padding: "16px 20px 0",
 }
 
-const welcomeSmall = {
-  fontSize: 11,
-  color: "#6b7c4e",
+const searchBar: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  gap: 10,
+  background: "white",
+  borderRadius: 8,
+  padding: "10px 14px",
+  border: "1px solid #ddd",
+}
+
+const searchInput: React.CSSProperties = {
+  border: "none",
+  outline: "none",
+  fontSize: 14,
+  color: "#333",
+  flex: 1,
+  background: "transparent",
+}
+
+// Welcome
+const welcomeSection: React.CSSProperties = {
+  padding: "24px 20px",
+  textAlign: "center",
+}
+
+const welcomeSmall: React.CSSProperties = {
+  fontSize: 12,
+  color: "#687E50",
   fontWeight: 600,
   letterSpacing: "1px",
   margin: "0 0 8px 0",
 }
 
-const welcomeTitle = {
-  fontSize: 28,
+const welcomeTitle: React.CSSProperties = {
+  fontSize: 32,
   fontWeight: 800,
   color: "#333",
   margin: "0 0 4px 0",
   lineHeight: 1.1,
 }
 
-const welcomeSubtitle = {
-  fontSize: 14,
+const welcomeSubtitle: React.CSSProperties = {
+  fontSize: 16,
   fontWeight: 700,
   color: "#333",
   margin: "0 0 16px 0",
 }
 
-const welcomeDesc = {
-  fontSize: 12,
+const welcomeDesc: React.CSSProperties = {
+  fontSize: 14,
   color: "#555",
   lineHeight: 1.6,
-  textAlign: "justify" as const,
+  textAlign: "justify",
   margin: "0 0 20px 0",
 }
 
-const welcomeButtons = {
+const welcomeButtons: React.CSSProperties = {
   display: "flex",
   gap: 12,
-  justifyContent: "center" as const,
+  justifyContent: "center",
 }
 
-const btnPrimary = {
-  background: "#6b7c4e",
+const btnPrimary: React.CSSProperties = {
+  background: "#687E50",
   color: "white",
-  padding: "10px 20px",
+  padding: "12px 24px",
   border: "none",
   borderRadius: 8,
-  fontSize: 13,
+  fontSize: 14,
   fontWeight: 600,
   cursor: "pointer",
 }
 
-const btnSecondary = {
+const btnSecondary: React.CSSProperties = {
   background: "#c5d4a8",
   color: "#333",
-  padding: "10px 20px",
+  padding: "12px 24px",
   border: "none",
   borderRadius: 8,
-  fontSize: 13,
+  fontSize: 14,
   fontWeight: 600,
   cursor: "pointer",
 }
 
 // Guru
-const guruSection = {
-  background: "#6b7c4e",
+const guruSection: React.CSSProperties = {
+  background: "#687E50",
   padding: "24px 20px",
   marginBottom: 20,
 }
 
-const guruLabel = {
+const guruLabel: React.CSSProperties = {
+  fontSize: 15,
+  fontWeight: 600,
+  color: "white",
+  margin: "0 0 2px 0",
+}
+
+const guruSublabel: React.CSSProperties = {
+  fontSize: 13,
+  color: "rgba(255,255,255,0.8)",
+  margin: "0 0 16px 0",
+}
+
+const guruList: React.CSSProperties = {
+  display: "flex",
+  gap: 12,
+  overflowX: "auto",
+  paddingBottom: 8,
+}
+
+const guruCard: React.CSSProperties = {
+  background: "rgba(255,255,255,0.15)",
+  borderRadius: 12,
+  padding: 16,
+  minWidth: 120,
+  textAlign: "center",
+  backdropFilter: "blur(10px)",
+}
+
+const guruFoto: React.CSSProperties = {
+  width: 60,
+  height: 60,
+  borderRadius: "50%",
+  objectFit: "cover",
+  margin: "0 auto 8px",
+  display: "block",
+}
+
+const guruName: React.CSSProperties = {
   fontSize: 13,
   fontWeight: 600,
   color: "white",
   margin: "0 0 2px 0",
 }
 
-const guruSublabel = {
+const guruJabatan: React.CSSProperties = {
   fontSize: 11,
-  color: "rgba(255,255,255,0.8)",
-  margin: "0 0 16px 0",
-}
-
-const guruList = {
-  display: "flex",
-  gap: 12,
-  overflowX: "auto" as const,
-  paddingBottom: 8,
-}
-
-const guruCard = {
-  background: "rgba(255,255,255,0.15)",
-  borderRadius: 12,
-  padding: 16,
-  minWidth: 100,
-  textAlign: "center" as const,
-  backdropFilter: "blur(10px)",
-}
-
-const guruFoto = {
-  width: 50,
-  height: 50,
-  borderRadius: "50%",
-  objectFit: "cover" as const,
-  margin: "0 auto 8px",
-  display: "block",
-}
-
-const guruName = {
-  fontSize: 11,
-  fontWeight: 600,
-  color: "white",
-  margin: "0 0 2px 0",
-}
-
-const guruJabatan = {
-  fontSize: 10,
   color: "rgba(255,255,255,0.8)",
   margin: 0,
 }
 
 // Karya Siswa
-const karyaSection = {
+const karyaSection: React.CSSProperties = {
   padding: "0 20px",
   marginBottom: 20,
 }
 
-const sectionHeader = {
+const sectionHeader: React.CSSProperties = {
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
   marginBottom: 12,
 }
 
-const sectionTitle = {
-  fontSize: 16,
+const sectionTitle: React.CSSProperties = {
+  fontSize: 18,
   fontWeight: 700,
   color: "#333",
   margin: 0,
 }
 
-const btnLihatSemua = {
+const btnLihatSemua: React.CSSProperties = {
   background: "none",
   border: "none",
-  color: "#6b7c4e",
-  fontSize: 12,
+  color: "#687E50",
+  fontSize: 13,
   fontWeight: 500,
   cursor: "pointer",
 }
 
-const karyaGrid = {
+const karyaGrid: React.CSSProperties = {
   display: "grid",
   gridTemplateColumns: "1fr 1fr",
   gap: 12,
   marginBottom: 12,
 }
 
-const karyaCard = {
+const karyaCard: React.CSSProperties = {
   background: "white",
   borderRadius: 12,
   overflow: "hidden",
   boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
 }
 
-const karyaImage = {
+const karyaImage: React.CSSProperties = {
   width: "100%",
   aspectRatio: "16 / 9",
-  objectFit: "cover" as const,
+  objectFit: "cover",
   display: "block",
 }
 
-const karyaImagePlaceholder = {
+const karyaImagePlaceholder: React.CSSProperties = {
   width: "100%",
   aspectRatio: "16 / 9",
   background: "#f0f4e8",
@@ -687,22 +843,22 @@ const karyaImagePlaceholder = {
   justifyContent: "center",
 }
 
-const karyaTitle = {
-  fontSize: 11,
+const karyaTitle: React.CSSProperties = {
+  fontSize: 13,
   fontWeight: 500,
   color: "#333",
-  padding: "8px 12px",
+  padding: "10px 14px",
   margin: 0,
 }
 
-const btnTambahKarya = {
+const btnTambahKarya: React.CSSProperties = {
   width: "100%",
-  background: "#6b7c4e",
+  background: "#687E50",
   color: "white",
-  padding: "10px",
+  padding: "12px",
   border: "none",
   borderRadius: 8,
-  fontSize: 12,
+  fontSize: 14,
   fontWeight: 500,
   cursor: "pointer",
   display: "flex",
@@ -711,104 +867,105 @@ const btnTambahKarya = {
 }
 
 // Alumni
-const alumniSection = {
-  background: "#6b7c4e",
+const alumniSection: React.CSSProperties = {
+  background: "#687E50",
   margin: "0 20px 20px",
   borderRadius: 12,
-  padding: "20px",
-  textAlign: "center" as const,
+  padding: "24px",
+  textAlign: "center",
 }
 
-const alumniLabel = {
-  fontSize: 12,
+const alumniLabel: React.CSSProperties = {
+  fontSize: 14,
   color: "rgba(255,255,255,0.9)",
   margin: "0 0 4px 0",
 }
 
-const alumniValue = {
-  fontSize: 36,
+const alumniValue: React.CSSProperties = {
+  fontSize: 40,
   fontWeight: 700,
   color: "white",
   margin: "0 0 2px 0",
 }
 
-const alumniSublabel = {
-  fontSize: 11,
+const alumniSublabel: React.CSSProperties = {
+  fontSize: 13,
   color: "rgba(255,255,255,0.8)",
   margin: 0,
 }
 
 // Stats
-const statsSection = {
+const statsSection: React.CSSProperties = {
   padding: "0 20px",
   display: "flex",
-  flexDirection: "column" as const,
+  flexDirection: "column",
   gap: 12,
   marginBottom: 20,
 }
 
-const statCardLarge = {
+const statCardLarge: React.CSSProperties = {
   background: "white",
   borderRadius: 12,
   boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
   overflow: "hidden",
 }
 
-const statCardContent = {
-  padding: "20px",
+const statCardContent: React.CSSProperties = {
+  padding: "24px",
 }
 
-const statCardTitle = {
-  fontSize: 18,
+const statCardTitle: React.CSSProperties = {
+  fontSize: 20,
   fontWeight: 700,
-  color: "#6b7c4e",
+  color: "#687E50",
   margin: "0 0 8px 0",
 }
 
-const statCardDesc = {
-  fontSize: 11,
+const statCardDesc: React.CSSProperties = {
+  fontSize: 13,
   color: "#666",
   lineHeight: 1.5,
   margin: "0 0 16px 0",
 }
 
-const statNumberRow = {
+const statNumberRow: React.CSSProperties = {
   display: "flex",
   justifyContent: "space-between",
   alignItems: "flex-end",
 }
 
-const statPercent = {
-  fontSize: 32,
+const statPercent: React.CSSProperties = {
+  fontSize: 36,
   fontWeight: 700,
-  color: "#6b7c4e",
+  color: "#687E50",
   margin: "0 0 4px 0",
   lineHeight: 1,
 }
 
-const statSublabel = {
-  fontSize: 10,
+const statSublabel: React.CSSProperties = {
+  fontSize: 12,
   color: "#999",
   margin: 0,
 }
 
-const statIconLarge = {
+const statIconLarge: React.CSSProperties = {
   opacity: 0.5,
 }
 
 // Artikel
-const artikelSection = {
+const artikelSection: React.CSSProperties = {
   padding: "0 20px",
+  marginBottom: 20,
 }
 
-const artikelGrid = {
+const artikelGrid: React.CSSProperties = {
   display: "grid",
   gridTemplateColumns: "1fr 1fr",
   gap: 12,
   marginBottom: 12,
 }
 
-const artikelCard = {
+const artikelCard: React.CSSProperties = {
   background: "white",
   borderRadius: 12,
   overflow: "hidden",
@@ -816,13 +973,14 @@ const artikelCard = {
   cursor: "pointer",
 }
 
-const artikelThumb = {
+const artikelThumb: React.CSSProperties = {
   width: "100%",
   aspectRatio: "16 / 9",
-  objectFit: "cover" as const,
+  objectFit: "cover",
   display: "block",
 }
-const artikelThumbPlaceholder = {
+
+const artikelThumbPlaceholder: React.CSSProperties = {
   width: "100%",
   aspectRatio: "16 / 9",
   background: "#f0f4e8",
@@ -831,38 +989,42 @@ const artikelThumbPlaceholder = {
   justifyContent: "center",
 }
 
-const artikelCardContent = {
-  padding: 12,
+const artikelCardContent: React.CSSProperties = {
+  padding: 14,
 }
 
-const artikelCardText = {
-  fontSize: 10,
+const artikelCardText: React.CSSProperties = {
+  fontSize: 12,
   color: "#555",
-  lineHeight: 1.4,
-  margin: "0 0 8px 0",
-  textAlign: "justify" as const,
+  lineHeight: 1.5,
+  margin: "0 0 10px 0",
+  textAlign: "justify",
 }
 
-const btnBacaSelengkapnya = {
-  background: "#6b7c4e",
+const btnBacaSelengkapnya: React.CSSProperties = {
+  background: "#687E50",
   color: "white",
-  padding: "6px 12px",
+  padding: "8px 14px",
   border: "none",
   borderRadius: 4,
-  fontSize: 10,
+  fontSize: 11,
   fontWeight: 500,
   cursor: "pointer",
 }
 
-const btnLihatSemuaArtikel = {
-  width: "100%",
-  background: "#6b7c4e",
-  color: "white",
-  padding: "10px",
-  border: "none",
-  borderRadius: 8,
-  fontSize: 12,
-  fontWeight: 500,
-  cursor: "pointer",
+// Footer
+const footerStyle: React.CSSProperties = {
+  background: "#3d4a2e",
+  padding: "40px 20px",
+  marginTop: 20,
 }
 
+const footerContent: React.CSSProperties = {
+  textAlign: "center",
+}
+
+const footerText: React.CSSProperties = {
+  color: "rgba(255,255,255,0.6)",
+  fontSize: 13,
+  margin: 0,
+}

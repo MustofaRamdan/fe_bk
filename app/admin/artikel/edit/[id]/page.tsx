@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter, useParams } from "next/navigation"
 import Editor from "@/components/Editor"
+import AdminLayout from "@/components/AdminLayout"
 
 interface Post {
   id: number
@@ -105,6 +106,7 @@ export default function EditPost() {
 
     try {
       let thumbnailUrl = existingThumbnail || ""
+      const token = localStorage.getItem("token")
 
       // Upload thumbnail baru jika ada
       if (newThumbnail) {
@@ -114,6 +116,9 @@ export default function EditPost() {
 
         const uploadRes = await fetch( `${api}/api/upload`, {
           method: "POST",
+          headers: {
+            "Authorization": token ? `Bearer ${token}` : "",
+          },
           body: formData
         })
 
@@ -143,6 +148,7 @@ export default function EditPost() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": token ? `Bearer ${token}` : "",
         },
         body: JSON.stringify(payload)
       })
@@ -180,50 +186,16 @@ export default function EditPost() {
 
   if (fetching) {
     return (
-      <div style={pageWrapper}>
-        <header style={header}>
-          <button style={menuButton}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
-          </button>
-          <h1 style={headerTitle}>Admin BK</h1>
-          <div style={userIcon}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-              <circle cx="12" cy="8" r="4" />
-              <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-            </svg>
-          </div>
-        </header>
+      <AdminLayout>
         <main style={mainContent}>
           <p style={{padding: 20}}>Loading...</p>
         </main>
-      </div>
+      </AdminLayout>
     )
   }
 
   return (
-    <div style={pageWrapper}>
-      {/* Header */}
-      <header style={header}>
-        <button style={menuButton}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-        </button>
-        <h1 style={headerTitle}>Admin BK</h1>
-        <div style={userIcon}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-            <circle cx="12" cy="8" r="4" />
-            <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-          </svg>
-        </div>
-      </header>
-
+    <AdminLayout>
       {/* Main Content */}
       <main style={mainContent}>
         <div style={titleSection}>
@@ -368,7 +340,7 @@ export default function EditPost() {
           </form>
         </div>
       </main>
-    </div>
+    </AdminLayout>
   )
 }
 
@@ -381,7 +353,7 @@ const pageWrapper = {
 }
 
 const header = {
-  background: "#6b7c4e",
+  background: "#687E50",
   padding: "16px 20px",
   display: "flex",
   alignItems: "center",
@@ -559,12 +531,12 @@ const uploadBox = {
 }
 
 const uploadBoxActive = {
-  borderColor: "#6b7c4e",
+  borderColor: "#687E50",
   background: "#f5f7f2",
 }
 
 const uploadBoxHasFile = {
-  borderColor: "#6b7c4e",
+  borderColor: "#687E50",
   background: "#f5f7f2",
 }
 
@@ -619,7 +591,7 @@ const btnCancel = {
 }
 
 const btnSave = {
-  background: "#6b7c4e",
+  background: "#687E50",
   color: "white",
   padding: "8px 20px",
   border: "none",

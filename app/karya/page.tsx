@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import Drawer from "@/components/Drawer"
+import DesktopLayout from "@/components/DesktopLayout"
 
 type Karya = {
   id: number
@@ -23,7 +23,6 @@ export default function KaryaSiswaPage() {
   const [karyas, setKaryas] = useState<Karya[]>([])
   const [search, setSearch] = useState("")
   const [loading, setLoading] = useState(true)
-  const [drawerOpen, setDrawerOpen] = useState(false)
 
   const fetchKaryas = async () => {
     try {
@@ -41,16 +40,6 @@ export default function KaryaSiswaPage() {
     fetchKaryas()
   }, [])
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("Yakin hapus karya ini?")) return
-    try {
-      await fetch(`${api}/api/karya/${id}`, { method: "DELETE" })
-      fetchKaryas()
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
   const formatDate = (dateStr: string) => {
     const d = new Date(dateStr)
     return d.toLocaleDateString("id-ID", {
@@ -67,38 +56,16 @@ export default function KaryaSiswaPage() {
 
   if (loading) {
     return (
-      <div style={pageWrapper}>
-        <header style={header}><h1 style={headerTitle}>BK SMNKN 12</h1></header>
+      <DesktopLayout>
         <main style={mainContent}>
           <p style={{ padding: 40, textAlign: "center", color: "#666" }}>Loading...</p>
         </main>
-      </div>
+      </DesktopLayout>
     )
   }
 
   return (
-    <div style={pageWrapper}>
-      {/* Header */}
-      <header style={header}>
-        <button
-  style={menuButton}
-  onClick={() => setDrawerOpen(true)}
->
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-        </button>
-        <h1 style={headerTitle}>BK SMKN 12</h1>
-        <div style={userIcon}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-            <circle cx="12" cy="8" r="4" />
-            <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-          </svg>
-        </div>
-      </header>
-
+    <DesktopLayout>
       {/* Main Content */}
       <main style={mainContent}>
         {/* Title & Breadcrumb */}
@@ -212,245 +179,43 @@ export default function KaryaSiswaPage() {
             ))
           )}
         </div>
-        <Drawer
-  isOpen={drawerOpen}
-  onClose={() => setDrawerOpen(false)}
-/>
       </main>
-    </div>
+    </DesktopLayout>
   )
 }
 
 // Styles
-const pageWrapper = {
-  background: "#e8e8e8",
-  minHeight: "100vh",
-  fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-}
-
-const header = {
-  background: "#6b7c4e",
-  padding: "16px 20px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  color: "white",
-}
-
-const menuButton = {
-  background: "none",
-  border: "none",
-  cursor: "pointer",
-  padding: 0,
-  display: "flex",
-  alignItems: "center",
-}
-
-const headerTitle = {
-  fontSize: 18,
-  fontWeight: 600,
-  margin: 0,
-  letterSpacing: "0.5px",
-}
-
-const userIcon = {
-  width: 32,
-  height: 32,
-  borderRadius: "50%",
-  border: "2px solid white",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  overflow: "hidden",
-}
-
 const mainContent = {
   padding: "20px",
   maxWidth: 800,
   margin: "0 auto",
 }
 
-const titleSection = {
-  marginBottom: 16,
-}
-
-const pageTitle = {
-  fontSize: 22,
-  fontWeight: 700,
-  color: "#333",
-  margin: "0 0 6px 0",
-}
-
-const breadcrumb = {
-  fontSize: 12,
-  color: "#666",
-  display: "flex",
-  alignItems: "center",
-  gap: 6,
-}
-
-const breadcrumbItem = {
-  color: "#666",
-  cursor: "pointer",
-}
-
-const breadcrumbSeparator = {
-  color: "#999",
-  fontSize: 14,
-}
-
-const breadcrumbActive = {
-  color: "#333",
-  fontWeight: 600,
-}
-
-const toolbar = {
-  display: "flex",
-  gap: 12,
-  marginBottom: 20,
-  alignItems: "center",
-}
-
-const searchWrapper = {
-  position: "relative" as const,
-  flex: 1,
-}
-
-const searchInput = {
-  width: "100%",
-  padding: "10px 36px 10px 12px",
-  borderRadius: 8,
-  border: "1px solid #ddd",
-  fontSize: 14,
-  outline: "none",
-  background: "white",
-  boxSizing: "border-box" as const,
-}
-
-const searchIcon = {
-  position: "absolute" as const,
-  right: 12,
-  top: "50%",
-  transform: "translateY(-50%)",
-  pointerEvents: "none" as const,
-}
-
-const btnAdd = {
-  background: "#6b7c4e",
-  color: "white",
-  padding: "10px 16px",
-  border: "none",
-  borderRadius: 8,
-  fontSize: 14,
-  fontWeight: 500,
-  cursor: "pointer",
-  display: "flex",
-  alignItems: "center",
-  whiteSpace: "nowrap" as const,
-}
-
-const cardsContainer = {
-  display: "flex",
-  flexDirection: "column" as const,
-  gap: 16,
-}
-
-const card = {
-  background: "white",
-  borderRadius: 12,
-  overflow: "hidden",
-  boxShadow: "0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05)",
-}
-
-const thumbnailWrapper = {
-  width: "100%",
-  height: 200,
-  overflow: "hidden",
-}
-
-const thumbnailImage = {
-  width: "100%",
-  height: "100%",
-  objectFit: "cover" as const,
-  display: "block",
-}
-
-const cardContent = {
-  padding: "16px 20px 20px",
-}
-
-const cardTitle = {
-  fontSize: 18,
-  fontWeight: 700,
-  color: "#333",
-  margin: "0 0 8px 0",
-}
-
-const cardDeskripsi = {
-  fontSize: 14,
-  color: "#555",
-  lineHeight: 1.6,
-  margin: "0 0 12px 0",
-}
-
-const linkSection = {
-  marginBottom: 12,
-}
-
-const sectionLabel = {
-  fontSize: 14,
-  fontWeight: 700,
-  color: "#333",
-  margin: "0 0 4px 0",
-}
-
-const linkUrl = {
-  fontSize: 14,
-  color: "#3b82f6",
-  textDecoration: "underline",
-  wordBreak: "break-all" as const,
-}
-
-const infoSection = {
-  marginBottom: 12,
-}
-
-const infoRow = {
-  display: "flex",
-  fontSize: 14,
-  color: "#555",
-  marginBottom: 2,
-}
-
-const infoLabel = {
-  width: 70,
-  flexShrink: 0,
-}
-
-const infoSeparator = {
-  width: 20,
-  flexShrink: 0,
-}
-
-const infoValue = {
-  flex: 1,
-}
-
-const cardDate = {
-  fontSize: 13,
-  color: "#999",
-  margin: "0 0 12px 0",
-}
-
-const cardActions = {
-  display: "flex",
-  justifyContent: "flex-end" as const,
-  gap: 8,
-}
-
-
-const emptyState = {
-  textAlign: "center" as const,
-  padding: "60px 20px",
-  color: "#999",
-}
+const titleSection = { marginBottom: 16 }
+const pageTitle = { fontSize: 22, fontWeight: 700, color: "#333", margin: "0 0 6px 0" }
+const breadcrumb = { fontSize: 12, color: "#666", display: "flex", alignItems: "center", gap: 6 }
+const breadcrumbItem = { color: "#666", cursor: "pointer" }
+const breadcrumbSeparator = { color: "#999", fontSize: 14 }
+const breadcrumbActive = { color: "#333", fontWeight: 600 }
+const toolbar = { display: "flex", gap: 12, marginBottom: 20, alignItems: "center" }
+const searchWrapper = { position: "relative" as const, flex: 1 }
+const searchInput = { width: "100%", padding: "10px 36px 10px 12px", borderRadius: 8, border: "1px solid #ddd", fontSize: 14, outline: "none", background: "white", boxSizing: "border-box" as const }
+const searchIcon = { position: "absolute" as const, right: 12, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" as const }
+const btnAdd = { background: "#687E50", color: "white", padding: "10px 16px", border: "none", borderRadius: 8, fontSize: 14, fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", whiteSpace: "nowrap" as const }
+const cardsContainer = { display: "flex", flexDirection: "column" as const, gap: 16 }
+const card = { background: "white", borderRadius: 12, overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05)" }
+const thumbnailWrapper = { width: "100%", height: 200, overflow: "hidden" }
+const thumbnailImage = { width: "100%", height: "100%", objectFit: "cover" as const, display: "block" }
+const cardContent = { padding: "16px 20px 20px" }
+const cardTitle = { fontSize: 18, fontWeight: 700, color: "#333", margin: "0 0 8px 0" }
+const cardDeskripsi = { fontSize: 14, color: "#555", lineHeight: 1.6, margin: "0 0 12px 0" }
+const linkSection = { marginBottom: 12 }
+const sectionLabel = { fontSize: 14, fontWeight: 700, color: "#333", margin: "0 0 4px 0" }
+const linkUrl = { fontSize: 14, color: "#3b82f6", textDecoration: "underline", wordBreak: "break-all" as const }
+const infoSection = { marginBottom: 12 }
+const infoRow = { display: "flex", fontSize: 14, color: "#555", marginBottom: 2 }
+const infoLabel = { width: 70, flexShrink: 0 }
+const infoSeparator = { width: 20, flexShrink: 0 }
+const infoValue = { flex: 1 }
+const cardDate = { fontSize: 13, color: "#999", margin: "0 0 12px 0" }
+const emptyState = { textAlign: "center" as const, padding: "60px 20px", color: "#999" }

@@ -126,3 +126,72 @@ body {
   border-radius: 10px;
   margin: 10px 0;
 }
+
+/* ================= DESKTOP LAYOUT ================= */
+@media (min-width: 1024px) {
+  /* Sidebar muncul di desktop */
+  [data-sidebar] {
+    display: flex !important;
+    flex-direction: column;
+  }
+  
+  /* Main content bergeser ke kanan */
+  [data-main-content] {
+    margin-left: 260px;
+  }
+  
+  /* Header — hide hamburger, hide title text, show user area on right */
+  [data-header] {
+    background: transparent !important;
+    padding: 12px 24px !important;
+    justify-content: flex-end !important;
+  }
+
+  /* Hide hamburger menu button on desktop */
+  [data-menu-btn] {
+    display: none !important;
+  }
+
+  /* Hide header title on desktop since sidebar has branding */
+  [data-header-title] {
+    display: none !important;
+  }
+
+  /* Hero banner — show as a row of 3 images */
+  [data-hero] {
+    padding: 0 24px;
+    background: transparent !important;
+  }
+
+  /* Search bar wider on desktop */
+  [data-search] {
+    padding: 16px 24px 0 !important;
+  }
+  
+  /* Stats section jadi grid 2 kolom di desktop, wirausaha spans full */
+  [data-stats] {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+  }
+  
+  [data-stat-wirausaha] {
+    grid-column: 1 / -1;
+  }
+  
+  /* Artikel grid jadi 4 kolom di desktop */
+  [data-artikel-grid] {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  
+  /* Karya grid jadi 4 kolom di desktop */
+  [data-karya-grid] {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  
+  /* Guru list tidak scroll, tapi wrap */
+  [data-guru-list] {
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow-x: visible;
+  }
+}

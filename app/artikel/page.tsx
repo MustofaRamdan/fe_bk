@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import DesktopLayout from "@/components/DesktopLayout"
 
 const getPreviewHTML = (html: string) => {
   // hapus gambar dari konten
@@ -82,28 +83,10 @@ export default function ArtikelPage() {
     return content.substring(0, maxLength) + "..."
   }
 
-  if (loading) return <div style={pageWrapper}><p style={{padding: 20}}>Loading...</p></div>
+  if (loading) return <DesktopLayout><p style={{padding: 20}}>Loading...</p></DesktopLayout>
 
   return (
-    <div style={pageWrapper}>
-      {/* Header */}
-      <header style={header}>
-        <button style={menuButton}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-        </button>
-        <h1 style={headerTitle}>BK SMKN 12</h1>
-        <div style={userIcon}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-            <circle cx="12" cy="8" r="4" />
-            <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-          </svg>
-        </div>
-      </header>
-
+    <DesktopLayout>
       {/* Main Content */}
       <main style={mainContent}>
         {/* Title & Breadcrumb */}
@@ -174,53 +157,11 @@ export default function ArtikelPage() {
           )}
         </div>
       </main>
-    </div>
+    </DesktopLayout>
   )
 }
 
 // Styles
-const pageWrapper = {
-  background: "#e8e8e8",
-  minHeight: "100vh",
-  fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-}
-
-const header = {
-  background: "#6b7c4e",
-  padding: "16px 20px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  color: "white",
-}
-
-const menuButton = {
-  background: "none",
-  border: "none",
-  cursor: "pointer",
-  padding: 0,
-  display: "flex",
-  alignItems: "center",
-}
-
-const headerTitle = {
-  fontSize: 18,
-  fontWeight: 600,
-  margin: 0,
-  letterSpacing: "0.5px",
-}
-
-const userIcon = {
-  width: 32,
-  height: 32,
-  borderRadius: "50%",
-  border: "2px solid white",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  overflow: "hidden",
-}
-
 const mainContent = {
   padding: "20px",
   maxWidth: 800,
@@ -292,18 +233,6 @@ const searchIcon = {
   pointerEvents: "none" as const,
 }
 
-const btnAdd = {
-  background: "#6b7c4e",
-  color: "white",
-  padding: "10px 16px",
-  border: "none",
-  borderRadius: 8,
-  fontSize: 14,
-  fontWeight: 500,
-  cursor: "pointer",
-  whiteSpace: "nowrap" as const,
-}
-
 const errorBox = {
   background: "#fee2e2",
   border: "1px solid #ef4444",
@@ -363,12 +292,6 @@ const cardContent = {
   lineHeight: "1.6",
   margin: "0 0 16px 0",
   textAlign: "justify" as const,
-}
-
-const cardActions = {
-  display: "flex",
-  gap: 8,
-  justifyContent: "flex-end" as const,
 }
 
 const emptyText = {

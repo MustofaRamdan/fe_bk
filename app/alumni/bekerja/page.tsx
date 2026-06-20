@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import DesktopLayout from "@/components/DesktopLayout"
 
 interface Alumni {
   id: number
@@ -17,6 +18,7 @@ export default function Page() {
   const [data, setData] = useState<Alumni[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
+
 
   useEffect(() => {
     fetch(
@@ -34,45 +36,11 @@ export default function Page() {
   )
 
   return (
-    <div style={{ background: "#e8e8e8", minHeight: "100vh", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
-      
-      {/* HEADER */}
-      <header style={{
-        background: "#6b7c4e",
-        padding: "16px 20px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        color: "white",
-      }}>
-        <button style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-        </button>
-        <h1 style={{ fontSize: 18, fontWeight: 600, margin: 0 }}>Data Alumni Bekerja</h1>
-        <div style={{
-          width: 32,
-          height: 32,
-          borderRadius: "50%",
-          border: "2px solid white",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          overflow: "hidden",
-        }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-            <circle cx="12" cy="8" r="4" />
-            <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-          </svg>
-        </div>
-      </header>
+    <DesktopLayout>
 
       {/* HERO */}
       <div style={{
-        background: "#6b7c4e",
+        background: "#687E50",
         padding: "32px 20px 40px",
         textAlign: "center",
         color: "white",
@@ -122,7 +90,7 @@ export default function Page() {
         </button>
         <button style={{
           flex: 1,
-          background: "#6b7c4e",
+          background: "#687E50",
           color: "white",
           border: "none",
           padding: "14px",
@@ -212,7 +180,7 @@ export default function Page() {
                 fontSize: 14,
               }}>
                 <thead>
-                  <tr style={{ background: "#6b7c4e", color: "white" }}>
+                  <tr style={{ background: "#687E50", color: "white" }}>
                     <th style={{ padding: "16px", textAlign: "left", fontSize: 13, fontWeight: 600 }}>No</th>
                     <th style={{ padding: "16px", textAlign: "left", fontSize: 13, fontWeight: 600 }}>Nama Lengkap</th>
                     <th style={{ padding: "16px", textAlign: "left", fontSize: 13, fontWeight: 600 }}>Tahun Lulus</th>
@@ -247,6 +215,6 @@ export default function Page() {
           </div>
         )}
       </div>
-    </div>
+    </DesktopLayout>
   )
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter, useParams } from "next/navigation"
+import AdminLayout from "@/components/AdminLayout"
 
 const KELAS_OPTIONS = ["X", "XI", "XII"]
 
@@ -12,6 +13,8 @@ export default function EditGuruPage() {
   const id = params.id
 
   const [nama, setNama] = useState("")
+  const [nip, setNip] = useState("")
+  const [password, setPassword] = useState("")
   const [jabatan, setJabatan] = useState("")
   const [kelas, setKelas] = useState("")
   const [foto, setFoto] = useState<File | null>(null)
@@ -31,6 +34,7 @@ export default function EditGuruPage() {
         
         const g = json.data
         setNama(g.nama)
+        setNip(g.nip || "")
         setJabatan(g.jabatan)
         setKelas(g.kelas)
         setFotoLama(g.foto || "")
@@ -74,6 +78,7 @@ export default function EditGuruPage() {
 
     try {
       let fotoUrl = fotoLama
+      const token = localStorage.getItem("token")
 
       // Upload foto baru kalau ada
       if (foto) {
@@ -82,6 +87,9 @@ export default function EditGuruPage() {
 
         const uploadRes = await fetch(`${api}/api/upload`, {
           method: "POST",
+          headers: {
+            "Authorization": token ? `Bearer ${token}` : "",
+          },
           body: formData,
         })
 
@@ -91,17 +99,25 @@ export default function EditGuruPage() {
         fotoUrl = uploadData.url
       }
 
+      const updateData: any = {
+        nama,
+        nip,
+        jabatan,
+        kelas,
+        foto: fotoUrl,
+      }
+
+      if (password.trim() !== "") {
+        updateData.password = password
+      }
+
       const res = await fetch(`${api}/api/guru/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": token ? `Bearer ${token}` : "",
         },
-        body: JSON.stringify({
-          nama,
-          jabatan,
-          kelas,
-          foto: fotoUrl,
-        }),
+        body: JSON.stringify(updateData),
       })
 
       const data = await res.json()
@@ -111,7 +127,7 @@ export default function EditGuruPage() {
       }
 
       alert("Data berhasil diupdate!")
-      router.push("/guru")
+      router.push("/admin/guru")
 
     } catch (err: any) {
       setError(err.message)
@@ -127,25 +143,7 @@ export default function EditGuruPage() {
   }
 
   return (
-    <div style={pageWrapper}>
-      {/* Header */}
-      <header style={header}>
-        <button style={menuButton}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-        </button>
-        <h1 style={headerTitle}>Admin BK</h1>
-        <div style={userIcon}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-            <circle cx="12" cy="8" r="4" />
-            <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-          </svg>
-        </div>
-      </header>
-
+    <AdminLayout>
       {/* Main Content */}
       <main style={mainContent}>
         {/* Title & Breadcrumb */}
@@ -177,6 +175,31 @@ export default function EditGuruPage() {
                 onChange={(e) => setNama(e.target.value)}
                 style={input}
                 required
+              />
+            </div>
+
+            {/* NIP */}
+            <div style={formGroup}>
+              <label style={label}>NIP</label>
+              <input
+                type="text"
+                placeholder="Masukkan NIP..."
+                value={nip}
+                onChange={(e) => setNip(e.target.value)}
+                style={input}
+                required
+              />
+            </div>
+
+            {/* Password */}
+            <div style={formGroup}>
+              <label style={label}>Password (Biarkan kosong jika tidak diubah)</label>
+              <input
+                type="password"
+                placeholder="Masukkan password baru..."
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                style={input}
               />
             </div>
 
@@ -297,7 +320,7 @@ export default function EditGuruPage() {
           </form>
         </div>
       </main>
-    </div>
+    </AdminLayout>
   )
 }
 
@@ -309,7 +332,7 @@ const pageWrapper = {
 }
 
 const header = {
-  background: "#6b7c4e",
+  background: "#687E50",
   padding: "16px 20px",
   display: "flex",
   alignItems: "center",
@@ -477,12 +500,12 @@ const uploadBox = {
 }
 
 const uploadBoxActive = {
-  borderColor: "#6b7c4e",
+  borderColor: "#687E50",
   background: "#f5f7f2",
 }
 
 const uploadBoxHasFile = {
-  borderColor: "#6b7c4e",
+  borderColor: "#687E50",
   background: "#f5f7f2",
 }
 
@@ -519,7 +542,7 @@ const uploadSubtext = {
 
 const fileName = {
   fontSize: 12,
-  color: "#6b7c4e",
+  color: "#687E50",
   margin: "8px 0 0 0",
   fontWeight: 500,
 }
@@ -544,7 +567,7 @@ const btnCancel = {
 }
 
 const btnSave = {
-  background: "#6b7c4e",
+  background: "#687E50",
   color: "white",
   padding: "8px 20px",
   border: "none",

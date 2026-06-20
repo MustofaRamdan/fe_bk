@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import AdminLayout from "@/components/AdminLayout"
 
 interface Aktivitas {
   id: number
@@ -54,7 +55,12 @@ export default function DashboardPage() {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch(`${api}/api/dashboard`)
+      const token = localStorage.getItem("token")
+      const res = await fetch(`${api}/api/dashboard`, {
+        headers: {
+          "Authorization": token ? `Bearer ${token}` : "",
+        }
+      })
       const data = await res.json()
 
       if (!res.ok) throw new Error(data.error || "Gagal mengambil data")
@@ -69,78 +75,28 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div style={pageWrapper}>
-        <header style={header}>
-          <button style={menuButton}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
-          </button>
-          <h1 style={headerTitle}>Admin BK</h1>
-          <div style={userIcon}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-              <circle cx="12" cy="8" r="4" />
-              <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-            </svg>
-          </div>
-        </header>
+      <AdminLayout>
         <main style={mainContent}>
           <p style={{padding: 40, textAlign: "center"}}>Loading dashboard...</p>
         </main>
-      </div>
+      </AdminLayout>
     )
   }
 
   if (error) {
     return (
-      <div style={pageWrapper}>
-        <header style={header}>
-          <button style={menuButton}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
-          </button>
-          <h1 style={headerTitle}>Admin BK</h1>
-          <div style={userIcon}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-              <circle cx="12" cy="8" r="4" />
-              <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-            </svg>
-          </div>
-        </header>
+      <AdminLayout>
         <main style={mainContent}>
           <div style={errorBox}>{error}</div>
         </main>
-      </div>
+      </AdminLayout>
     )
   }
 
   if (!stats) return null
 
   return (
-    <div style={pageWrapper}>
-      {/* Header */}
-      <header style={header}>
-        <button style={menuButton}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-        </button>
-        <h1 style={headerTitle}>Admin BK</h1>
-        <div style={userIcon}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-            <circle cx="12" cy="8" r="4" />
-            <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-          </svg>
-        </div>
-      </header>
-
+    <AdminLayout>
       {/* Main Content */}
       <main style={mainContent}>
         {/* Welcome Card */}
@@ -150,7 +106,7 @@ export default function DashboardPage() {
             <p style={welcomeSubtitle}>Kelola konten website dengan mudah.</p>
           </div>
           <div style={welcomeImage}>
-            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#6b7c4e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#687E50" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
               <line x1="8" y1="21" x2="16" y2="21" />
               <line x1="12" y1="17" x2="12" y2="21" />
@@ -181,7 +137,7 @@ export default function DashboardPage() {
             </div>
           </div>
           <div style={siswaIllustration}>
-            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#6b7c4e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#687E50" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 2L2 7l10 5 10-5-10-5z" />
               <path d="M2 17l10 5 10-5" />
               <path d="M2 12l10 5 10-5" />
@@ -199,7 +155,7 @@ export default function DashboardPage() {
             onClick={() => router.push("/admin/artikel")}
           >
             <div style={statIcon}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7c4e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#687E50" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                 <polyline points="14 2 14 8 20 8" />
                 <line x1="16" y1="13" x2="8" y2="13" />
@@ -209,7 +165,7 @@ export default function DashboardPage() {
             </div>
             <p style={statLabel}>Artikel</p>
             <p style={statValue}>{stats.artikel.total}</p>
-            <p style={statGrowth}>↗ {stats.artikel.growth > 0 ? '+' : ''}{stats.artikel.growth}%</p>
+            <p style={statGrowth}>â†— {stats.artikel.growth > 0 ? '+' : ''}{stats.artikel.growth}%</p>
           </div>
 
           {/* Guru BK */}
@@ -218,7 +174,7 @@ export default function DashboardPage() {
             onClick={() => router.push("/admin/guru")}
           >
             <div style={statIcon}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7c4e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#687E50" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                 <circle cx="12" cy="7" r="4" />
               </svg>
@@ -226,7 +182,7 @@ export default function DashboardPage() {
             <p style={statLabel}>Guru BK</p>
 <p style={statValue}>{stats.guruBK.total}</p>
 <p style={statGrowth}>
-  ↗ {stats.guruBK.growth > 0 ? "+" : ""}
+  â†— {stats.guruBK.growth > 0 ? "+" : ""}
   {stats.guruBK.growth}%
 </p>
           </div>
@@ -237,14 +193,14 @@ export default function DashboardPage() {
             onClick={() => router.push("/admin/karya")}
           >
             <div style={statIcon}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7c4e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#687E50" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
               </svg>
             </div>
             <p style={statLabel}>Karya Siswa</p>
 <p style={statValue}>{stats.karyaSiswa.total}</p>
 <p style={statGrowth}>
-  ↗ {stats.karyaSiswa.growth > 0 ? "+" : ""}
+  â†— {stats.karyaSiswa.growth > 0 ? "+" : ""}
   {stats.karyaSiswa.growth}%
 </p>
           </div>
@@ -255,7 +211,7 @@ export default function DashboardPage() {
             onClick={() => router.push("/admin/alumni/persetujuan")}
           >
             <div style={statIcon}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7c4e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#687E50" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                 <circle cx="9" cy="7" r="4" />
                 <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
@@ -265,7 +221,7 @@ export default function DashboardPage() {
             <p style={statLabel}>Alumni</p>
 <p style={statValue}>{stats.alumni.total}</p>
 <p style={statGrowth}>
-  ↗ {stats.alumni.growth > 0 ? "+" : ""}
+  â†— {stats.alumni.growth > 0 ? "+" : ""}
   {stats.alumni.growth}%
 </p>
           </div>
@@ -273,33 +229,33 @@ export default function DashboardPage() {
           {/* Kuliah */}
           <div style={statCard}>
             <div style={statIcon}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7c4e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#687E50" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
                 <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
               </svg>
             </div>
             <p style={statLabel}>Kuliah</p>
             <p style={statValue}>{stats.kuliah}</p>
-            <p style={statGrowth}>↗ 18%</p>
+            <p style={statGrowth}>â†— 18%</p>
           </div>
 
           {/* Bekerja */}
           <div style={statCard}>
             <div style={statIcon}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7c4e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#687E50" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
                 <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
               </svg>
             </div>
             <p style={statLabel}>Bekerja</p>
             <p style={statValue}>{stats.bekerja}</p>
-            <p style={statGrowth}>↗ 18%</p>
+            <p style={statGrowth}>â†— 18%</p>
           </div>
 
           {/* Wirausaha */}
           <div style={statCard}>
             <div style={statIcon}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7c4e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#687E50" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 2L2 7l10 5 10-5-10-5z" />
                 <path d="M2 17l10 5 10-5" />
                 <path d="M2 12l10 5 10-5" />
@@ -307,19 +263,19 @@ export default function DashboardPage() {
             </div>
             <p style={statLabel}>Wirausaha</p>
             <p style={statValue}>{stats.wirausaha}</p>
-            <p style={statGrowth}>↗ 18%</p>
+            <p style={statGrowth}>â†— 18%</p>
           </div>
 
           {/* Layanan */}
           <div style={statCard}>
             <div style={statIcon}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7c4e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#687E50" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
               </svg>
             </div>
             <p style={statLabel}>Layanan</p>
             <p style={statValue}>{stats.layanan}</p>
-            <p style={statGrowth}>↗ 18%</p>
+            <p style={statGrowth}>â†— 18%</p>
           </div>
         </div>
 
@@ -360,7 +316,7 @@ export default function DashboardPage() {
                       style={{width: "100%", height: "100%", objectFit: "cover" as const, borderRadius: "50%"}}
                     />
                   ) : (
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7c4e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#687E50" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                       <circle cx="12" cy="7" r="4" />
                     </svg>
@@ -371,7 +327,7 @@ export default function DashboardPage() {
                     <strong style={aktivitasNama}>{item.nama}</strong> {item.aksi}
                   </p>
                   <p style={aktivitasWaktu}>
-                    {item.waktu} • {new Date(item.tanggal).toLocaleTimeString("id-ID", {
+                    {item.waktu} â€¢ {new Date(item.tanggal).toLocaleTimeString("id-ID", {
                       hour: "2-digit",
                       minute: "2-digit"
                     })}
@@ -383,7 +339,7 @@ export default function DashboardPage() {
           )}
         </div>
       </main>
-    </div>
+    </AdminLayout>
   )
 }
 
@@ -396,7 +352,7 @@ const pageWrapper = {
 }
 
 const header = {
-  background: "#6b7c4e",
+  background: "#687E50",
   padding: "16px 20px",
   display: "flex",
   alignItems: "center",
@@ -493,7 +449,7 @@ const siswaContent = {
 const siswaIcon = {
   width: 48,
   height: 48,
-  background: "#6b7c4e",
+  background: "#687E50",
   borderRadius: 12,
   display: "flex",
   alignItems: "center",
@@ -568,7 +524,7 @@ const statValue = {
 
 const statGrowth = {
   fontSize: 11,
-  color: "#6b7c4e",
+  color: "#687E50",
   margin: 0,
   fontWeight: 500,
 }
@@ -583,7 +539,7 @@ const aktivitasHeader = {
 const btnLihatSemua = {
   background: "none",
   border: "none",
-  color: "#6b7c4e",
+  color: "#687E50",
   fontSize: 13,
   fontWeight: 500,
   cursor: "pointer",
@@ -639,7 +595,7 @@ const aktivitasWaktu = {
 
 const aktivitasBadge = {
   background: "#f0f4e8",
-  color: "#6b7c4e",
+  color: "#687E50",
   fontSize: 10,
   fontWeight: 600,
   padding: "4px 10px",

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import AdminLayout from "@/components/AdminLayout"
 
 type Karya = {
   id: number
@@ -36,7 +37,10 @@ export default function PersetujuanPage() {
 
   const fetchKaryas = async () => {
     try {
-      const res = await fetch(`${api}/api/karya`)
+      const token = localStorage.getItem("token")
+      const res = await fetch(`${api}/api/karya`, {
+        headers: token ? { "Authorization": `Bearer ${token}` } : {}
+      })
       const json = await res.json()
       const pending = (json.data || []).filter((k: Karya) => k.status === "PENDING")
       setKaryas(pending)
@@ -73,9 +77,13 @@ export default function PersetujuanPage() {
   const handleSetujui = async () => {
     if (!selectedKarya) return
     try {
+      const token = localStorage.getItem("token")
       const res = await fetch(`${api}/api/karya/${selectedKarya.id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": token ? `Bearer ${token}` : ""
+        },
         body: JSON.stringify({ 
           status: "DITERIMA",
           // Kirim notifikasi email kalau siswa minta
@@ -113,9 +121,13 @@ export default function PersetujuanPage() {
     }
 
     try {
+      const token = localStorage.getItem("token")
       const res = await fetch(`${api}/api/karya/${selectedKarya.id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": token ? `Bearer ${token}` : ""
+        },
         body: JSON.stringify({ 
           status: "DITOLAK", 
           keterangan: alasanTolak.trim(),
@@ -142,36 +154,17 @@ export default function PersetujuanPage() {
 
   if (loading) {
     return (
-      <div style={pageWrapper}>
-        <header style={header}><h1 style={headerTitle}>Admin BK</h1></header>
+      <AdminLayout>
         <main style={mainContent}>
           <p style={{ padding: 40, textAlign: "center", color: "#666" }}>Loading...</p>
         </main>
-      </div>
+      </AdminLayout>
     )
   }
 
   return (
-    <div style={pageWrapper}>
+    <AdminLayout>
       <style dangerouslySetInnerHTML={{ __html: modalStyles }} />
-
-      {/* Header */}
-      <header style={header}>
-        <button style={menuButton}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-        </button>
-        <h1 style={headerTitle}>Admin BK</h1>
-        <div style={userIcon}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-            <circle cx="12" cy="8" r="4" />
-            <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-          </svg>
-        </div>
-      </header>
 
       <main style={mainContent}>
         <h2 style={pageTitle}>Karya Menunggu Persetujuan</h2>
@@ -208,7 +201,7 @@ export default function PersetujuanPage() {
                   <p style={itemMeta}>Jurusan: {k.jurusan}</p>
                   <p style={itemDate}>{formatDate(k.createdAt)}</p>
                   {k.inginNotifEmail && k.email && (
-                    <p style={emailBadge}>📧 Notif Email: {k.email}</p>
+                    <p style={emailBadge}>ðŸ“§ Notif Email: {k.email}</p>
                   )}
                 </div>
               </div>
@@ -261,7 +254,7 @@ export default function PersetujuanPage() {
                     <div style={detailSection}>
                       <h4 style={detailLabel}>Link Karya</h4>
                       <a href={selectedKarya.link} target="_blank" rel="noopener noreferrer" style={detailLink}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7c4e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#687E50" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
                           <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
                           <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
                         </svg>
@@ -404,7 +397,7 @@ export default function PersetujuanPage() {
           )}
         </div>
       )}
-    </div>
+    </AdminLayout>
   )
 }
 
@@ -471,7 +464,7 @@ const pageWrapper = {
 }
 
 const header = {
-  background: "#6b7c4e",
+  background: "#687E50",
   padding: "16px 20px",
   display: "flex",
   alignItems: "center",
@@ -578,7 +571,7 @@ const itemDate = {
 
 const emailBadge = {
   fontSize: 11,
-  color: "#6b7c4e",
+  color: "#687E50",
   background: "#f0f4e8",
   padding: "2px 8px",
   borderRadius: 10,
@@ -659,7 +652,7 @@ const detailValue = {
 
 const detailLink = {
   fontSize: 14,
-  color: "#6b7c4e",
+  color: "#687E50",
   textDecoration: "none",
   display: "flex",
   alignItems: "center",
@@ -793,7 +786,7 @@ const tolakPreview = {
 const previewLabel = {
   fontSize: 12,
   fontWeight: 600,
-  color: "#6b7c4e",
+  color: "#687E50",
   margin: "0 0 8px 0",
 }
 

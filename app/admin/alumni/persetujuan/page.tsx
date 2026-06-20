@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import AdminLayout from "@/components/AdminLayout"
 
 type Alumni = {
   id: number
@@ -42,7 +43,10 @@ export default function PersetujuanAlumniPage() {
 
   const fetchAlumnis = async () => {
     try {
-      const res = await fetch(`${api}/api/alumni?statusPengajuan=PENDING`)
+      const token = localStorage.getItem("token")
+      const res = await fetch(`${api}/api/alumni?statusPengajuan=PENDING`, {
+        headers: token ? { "Authorization": `Bearer ${token}` } : {}
+      })
       const json = await res.json()
       setAlumnis(json.data || [])
     } catch (err) {
@@ -84,9 +88,13 @@ const getFileUrl = (path?: string | null) => {
   const handleSetujui = async () => {
     if (!selectedAlumni) return
     try {
+      const token = localStorage.getItem("token")
       const res = await fetch(`${api}/api/alumni/${selectedAlumni.id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": token ? `Bearer ${token}` : ""
+        },
         body: JSON.stringify({ statusPengajuan: "DITERIMA" })
       })
       if (!res.ok) throw new Error("Gagal menyetujui")
@@ -100,9 +108,13 @@ const getFileUrl = (path?: string | null) => {
   const handleTolak = async () => {
     if (!selectedAlumni) return
     try {
+      const token = localStorage.getItem("token")
       const res = await fetch(`${api}/api/alumni/${selectedAlumni.id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": token ? `Bearer ${token}` : ""
+        },
         body: JSON.stringify({ statusPengajuan: "DITOLAK", keterangan: "Data tidak valid" })
       })
       if (!res.ok) throw new Error("Gagal menolak")
@@ -265,36 +277,17 @@ const formatDate = (dateStr: string) => {
 
   if (loading) {
     return (
-      <div style={pageWrapper}>
-        <header style={header}><h1 style={headerTitle}>Admin BK</h1></header>
+      <AdminLayout>
         <main style={mainContent}>
           <p style={{ padding: 40, textAlign: "center", color: "#666" }}>Loading...</p>
         </main>
-      </div>
+      </AdminLayout>
     )
   }
 
   return (
-    <div style={pageWrapper}>
+    <AdminLayout>
       <style dangerouslySetInnerHTML={{ __html: modalStyles }} />
-
-      {/* Header */}
-      <header style={header}>
-        <button style={menuButton}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-        </button>
-        <h1 style={headerTitle}>Admin BK</h1>
-        <div style={userIcon}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-            <circle cx="12" cy="8" r="4" />
-            <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-          </svg>
-        </div>
-      </header>
 
       {/* Main Content */}
       <main style={mainContent}>
@@ -477,7 +470,7 @@ const formatDate = (dateStr: string) => {
           )}
         </div>
       )}
-    </div>
+    </AdminLayout>
   )
 }
 
@@ -522,7 +515,7 @@ const modalStyles = `
     opacity: 0;
   }
   
-  /* ✅ RESULT MODAL - CENTER EVERYTHING */
+  /* âœ… RESULT MODAL - CENTER EVERYTHING */
   .result-modal {
     display: flex !important;
     flex-direction: column !important;
@@ -545,7 +538,7 @@ const pageWrapper = {
 }
 
 const header = {
-  background: "#6b7c4e",
+  background: "#687E50",
   padding: "16px 20px",
   display: "flex",
   alignItems: "center",

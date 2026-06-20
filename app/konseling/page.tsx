@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import Drawer from "@/components/Drawer"
+import DesktopLayout from "@/components/DesktopLayout"
 
 type ModeKonseling = "anonim" | "terdaftar" | null
 
@@ -21,7 +21,7 @@ export default function KonselingPage() {
   const router = useRouter()
   const [mode, setMode] = useState<ModeKonseling>(null)
   const [step, setStep] = useState<1 | 2 | 3>(1)
-    const [drawerOpen, setDrawerOpen] = useState(false)
+
   const [form, setForm] = useState<FormData>({
     nama: "",
     kelas: "",
@@ -80,9 +80,7 @@ export default function KonselingPage() {
   // ==================== STEP 1: PILIH MODE ====================
   if (step === 1) {
     return (
-      <div style={pageWrapper}>
-        <Header onMenuClick={() => setDrawerOpen(true)} />
-
+      <DesktopLayout>
         <main style={mainContent}>
           <div style={titleSection}>
             <h2 style={pageTitle}>Konseling</h2>
@@ -101,7 +99,7 @@ export default function KonselingPage() {
               {/* Mode Anonim */}
               <button style={modeCard} onClick={() => handleModeSelect("anonim")}>
                 <div style={modeIcon}>
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#6b7c4e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#687E50" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                     <circle cx="12" cy="7" r="4" />
                     <line x1="4" y1="7" x2="4" y2="7" strokeLinecap="round" strokeWidth="3" />
@@ -116,7 +114,7 @@ export default function KonselingPage() {
               {/* Mode Terdaftar */}
               <button style={modeCard} onClick={() => handleModeSelect("terdaftar")}>
                 <div style={modeIcon}>
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#6b7c4e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#687E50" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                     <circle cx="12" cy="7" r="4" />
                     <path d="M16 3.13a4 4 0 0 1 0 7.75" />
@@ -140,23 +138,15 @@ export default function KonselingPage() {
               </a>
             </div>
           </div>
-</main>
-
-<Drawer
-  isOpen={drawerOpen}
-  onClose={() => setDrawerOpen(false)}
-/>
-
-</div>
+        </main>
+      </DesktopLayout>
     )
   }
 
   // ==================== STEP 2: FORM KONSELING ====================
   if (step === 2) {
     return (
-      <div style={pageWrapper}>
-        <Header onMenuClick={() => setDrawerOpen(true)} />
-
+      <DesktopLayout>
         <main style={mainContent}>
           <div style={titleSection}>
             <h2 style={pageTitle}>Konseling</h2>
@@ -322,26 +312,18 @@ export default function KonselingPage() {
               </div>
             </form>
           </div>
-</main>
-
-<Drawer
-  isOpen={drawerOpen}
-  onClose={() => setDrawerOpen(false)}
-/>
-
-</div>
+        </main>
+      </DesktopLayout>
     )
   }
 
   // ==================== STEP 3: SUKSES ====================
   return (
-    <div style={pageWrapper}>
-      <Header onMenuClick={() => setDrawerOpen(true)} />
-
+    <DesktopLayout>
       <main style={mainContent}>
         <div style={successCard}>
           <div style={successIcon}>
-            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#6b7c4e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#687E50" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
               <polyline points="22 4 12 14.01 9 11.01" />
             </svg>
@@ -365,40 +347,8 @@ export default function KonselingPage() {
             </button>
           </div>
         </div>
-</main>
-
-<Drawer
-  isOpen={drawerOpen}
-  onClose={() => setDrawerOpen(false)}
-/>
-
-</div>
-  )
-}
-
-// ==================== HEADER COMPONENT ====================
-function Header({
-  onMenuClick,
-}: {
-  onMenuClick: () => void
-}) {
-  return (
-    <header style={header}>
-      <button style={menuButton} onClick={onMenuClick}>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-          <line x1="3" y1="6" x2="21" y2="6" />
-          <line x1="3" y1="12" x2="21" y2="12" />
-          <line x1="3" y1="18" x2="21" y2="18" />
-        </svg>
-      </button>
-      <h1 style={headerTitle}>Admin BK</h1>
-      <div style={userIcon}>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-          <circle cx="12" cy="8" r="4" />
-          <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-        </svg>
-      </div>
-    </header>
+      </main>
+    </DesktopLayout>
   )
 }
 
@@ -412,7 +362,7 @@ const pageWrapper = {
 }
 
 const header = {
-  background: "#6b7c4e",
+  background: "#687E50",
   padding: "16px 20px",
   display: "flex",
   alignItems: "center",
@@ -583,7 +533,7 @@ const modeBadge = {
   padding: "8px 16px",
   borderRadius: 20,
   fontSize: 12,
-  color: "#6b7c4e",
+  color: "#687E50",
   display: "inline-flex",
   alignItems: "center",
   gap: 8,
@@ -593,7 +543,7 @@ const modeBadge = {
 const btnUbahMode = {
   background: "none",
   border: "none",
-  color: "#6b7c4e",
+  color: "#687E50",
   fontSize: 11,
   fontWeight: 600,
   cursor: "pointer",
@@ -685,7 +635,7 @@ const checkboxLabel = {
 const checkbox = {
   width: 18,
   height: 18,
-  accentColor: "#6b7c4e",
+  accentColor: "#687E50",
 }
 
 const hint = {
@@ -723,7 +673,7 @@ const btnCancel = {
 }
 
 const btnSubmit = {
-  background: "#6b7c4e",
+  background: "#687E50",
   color: "white",
   padding: "10px 24px",
   border: "none",
@@ -804,7 +754,7 @@ const btnWAOutline = {
 }
 
 const btnBackHome = {
-  background: "#6b7c4e",
+  background: "#687E50",
   color: "white",
   padding: "12px 24px",
   border: "none",
