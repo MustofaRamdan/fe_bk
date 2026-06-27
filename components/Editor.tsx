@@ -33,16 +33,26 @@ export default function Editor({ onChange, initialValue = "" }: EditorProps) {
   if (!editor) return null
 
   const uploadImage = async (file: File) => {
+    const api = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
+    const token = localStorage.getItem("token")
     const formData = new FormData()
     formData.append("file", file)
 
-    const res = await fetch("/api/upload", {
+    const res = await fetch(`${api}/api/upload`, {
       method: "POST",
+      headers: {
+        "Authorization": token ? `Bearer ${token}` : "",
+      },
       body: formData
     })
 
+    if (!res.ok) {
+      const errText = await res.text()
+      throw new Error(`Upload gagal: ${errText}`)
+    }
+
     const data = await res.json()
-    return data.url
+    return `${api}${data.url}`
   }
 
   return (

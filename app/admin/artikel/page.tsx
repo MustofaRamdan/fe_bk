@@ -87,7 +87,49 @@ export default function ArtikelPage() {
     return content.substring(0, maxLength) + "..."
   }
 
-  if (loading) return <AdminLayout><p style={{padding: 20}}>Loading...</p></AdminLayout>
+  if (loading) {
+    return (
+      <AdminLayout>
+        <main style={mainContent}>
+          {/* Title & Breadcrumb */}
+          <div style={titleSection}>
+            <h2 style={pageTitle}>Artikel</h2>
+            <nav style={breadcrumb}>
+              <span style={breadcrumbItem}>Dashboard</span>
+              <span style={breadcrumbSeparator}>&rsaquo;</span>
+              <span style={breadcrumbActive}>Artikel</span>
+            </nav>
+          </div>
+
+          {/* Search & Add Button */}
+          <div style={toolbar}>
+            <div style={searchWrapper}>
+              <input type="text" placeholder="Cari..." style={searchInput} disabled />
+            </div>
+            <button style={{...btnAdd, opacity: 0.6}} disabled>Tambah Data</button>
+          </div>
+
+          {/* Cards Skeleton */}
+          <div style={cardsContainer}>
+            {[...Array(3)].map((_, i) => (
+              <div key={i} style={card} className="animate-pulse">
+                <div style={{width: "40%", height: 20, background: "#f3f4f1", borderRadius: 4, marginBottom: 8}}></div>
+                <div style={{width: "20%", height: 14, background: "#f3f4f1", borderRadius: 4, marginBottom: 16}}></div>
+                <div style={{width: "100%", height: 180, background: "#f3f4f1", borderRadius: 8, marginBottom: 12}}></div>
+                <div style={{width: "100%", height: 12, background: "#f3f4f1", borderRadius: 4, marginBottom: 8}}></div>
+                <div style={{width: "80%", height: 12, background: "#f3f4f1", borderRadius: 4, marginBottom: 16}}></div>
+                <div style={{display: "flex", gap: 8, justifyContent: "flex-end"}}>
+                  <div style={{width: 80, height: 28, background: "#f3f4f1", borderRadius: 6}}></div>
+                  <div style={{width: 60, height: 28, background: "#f3f4f1", borderRadius: 6}}></div>
+                  <div style={{width: 60, height: 28, background: "#f3f4f1", borderRadius: 6}}></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </main>
+      </AdminLayout>
+    )
+  }
 
   return (
     <AdminLayout>

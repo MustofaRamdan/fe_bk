@@ -114,12 +114,12 @@ export default function NewPost() {
         throw new Error(data.error || data.detail || `HTTP ${res.status}: ${responseText}`)
       }
 
-      console.log("âœ… SUKSES:", data)
+      console.log("✅ SUKSES:", data)
       alert("Artikel berhasil disimpan!")
-      router.push("/artikel")
+      router.push("/admin/artikel")
 
     } catch (err: any) {
-      console.error("ðŸ’¥ FRONTEND ERROR:", err)
+      console.error("💥 FRONTEND ERROR:", err)
       setError(err.message || "Terjadi kesalahan")
       setDebugInfo(`Detail: ${err.message}`)
     } finally {
@@ -140,9 +140,9 @@ export default function NewPost() {
         <div style={titleSection}>
           <h2 style={pageTitle}>Tambah Artikel</h2>
           <nav style={breadcrumb}>
-            <span style={breadcrumbItem}>Dashboard</span>
+            <span style={breadcrumbItem} onClick={() => router.push("/admin")}>Dashboard</span>
             <span style={breadcrumbSeparator}>&rsaquo;</span>
-            <span style={breadcrumbItem}>Artikel</span>
+            <span style={breadcrumbItem} onClick={() => router.push("/admin/artikel")}>Artikel</span>
             <span style={breadcrumbSeparator}>&rsaquo;</span>
             <span style={breadcrumbActive}>Tambah Artikel</span>
           </nav>

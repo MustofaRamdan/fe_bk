@@ -77,7 +77,56 @@ export default function DashboardPage() {
     return (
       <AdminLayout>
         <main style={mainContent}>
-          <p style={{padding: 40, textAlign: "center"}}>Loading dashboard...</p>
+          {/* Welcome Card Skeleton */}
+          <div style={{...welcomeCard, background: "#f0f2eb"}} className="animate-pulse">
+            <div style={welcomeText}>
+              <div style={{width: 180, height: 22, background: "#e1e5da", borderRadius: 4, marginBottom: 8}}></div>
+              <div style={{width: 260, height: 14, background: "#e1e5da", borderRadius: 4}}></div>
+            </div>
+            <div style={{...welcomeImage, background: "#e1e5da"}}></div>
+          </div>
+
+          {/* Total Siswa Card Skeleton */}
+          <div style={{...siswaCard, background: "#e5ecdb"}} className="animate-pulse">
+            <div style={siswaContent}>
+              <div style={{...siswaIcon, background: "#cbd6b8"}}></div>
+              <div>
+                <div style={{width: 120, height: 14, background: "#cbd6b8", borderRadius: 4, marginBottom: 8}}></div>
+                <div style={{width: 60, height: 32, background: "#cbd6b8", borderRadius: 4}}></div>
+              </div>
+            </div>
+          </div>
+
+          <h3 style={sectionTitle}>Ringkasan Lainnya</h3>
+          
+          {/* Stats Grid Skeleton */}
+          <div style={statsGrid}>
+            {[...Array(8)].map((_, i) => (
+              <div key={i} style={{...statCard, cursor: "default"}} className="animate-pulse">
+                <div style={{...statIcon, background: "#f3f4f1"}}></div>
+                <div style={{width: 70, height: 12, background: "#f3f4f1", borderRadius: 4, marginBottom: 8}}></div>
+                <div style={{width: 50, height: 24, background: "#f3f4f1", borderRadius: 4, marginBottom: 8}}></div>
+                <div style={{width: 40, height: 10, background: "#f3f4f1", borderRadius: 4}}></div>
+              </div>
+            ))}
+          </div>
+
+          {/* Aktivitas Terbaru Skeleton */}
+          <div style={aktivitasHeader}>
+            <h3 style={sectionTitle}>Aktivitas Terbaru</h3>
+          </div>
+          <div style={aktivitasList} className="animate-pulse">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} style={{...aktivitasItem, borderBottom: i === 2 ? "none" : "1px solid #f0f0f0"}}>
+                <div style={{...aktivitasAvatar, background: "#f3f4f1"}}></div>
+                <div style={aktivitasContent}>
+                  <div style={{width: "60%", height: 14, background: "#f3f4f1", borderRadius: 4, marginBottom: 6}}></div>
+                  <div style={{width: "30%", height: 10, background: "#f3f4f1", borderRadius: 4}}></div>
+                </div>
+                <div style={{width: 45, height: 18, background: "#f3f4f1", borderRadius: 10}}></div>
+              </div>
+            ))}
+          </div>
         </main>
       </AdminLayout>
     )

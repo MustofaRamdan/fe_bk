@@ -201,7 +201,7 @@ export default function EditPost() {
         <div style={titleSection}>
           <h2 style={pageTitle}>Edit Artikel</h2>
           <nav style={breadcrumb}>
-            <span style={breadcrumbItem} onClick={() => router.push("/admin/dashboard")}>Dashboard</span>
+            <span style={breadcrumbItem} onClick={() => router.push("/admin")}>Dashboard</span>
             <span style={breadcrumbSeparator}>&rsaquo;</span>
             <span style={breadcrumbItem} onClick={() => router.push("/admin/artikel")}>Artikel</span>
             <span style={breadcrumbSeparator}>&rsaquo;</span>

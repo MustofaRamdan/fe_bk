@@ -156,7 +156,22 @@ export default function PersetujuanPage() {
     return (
       <AdminLayout>
         <main style={mainContent}>
-          <p style={{ padding: 40, textAlign: "center", color: "#666" }}>Loading...</p>
+          <h2 style={pageTitle}>Karya Menunggu Persetujuan</h2>
+
+          <div style={listContainer}>
+            {[...Array(3)].map((_, i) => (
+              <div key={i} style={{...listItem, cursor: "default"}} className="animate-pulse">
+                <div style={{...thumbnailWrapper, background: "#f3f4f1"}}></div>
+                <div style={itemContent}>
+                  <div style={{width: "40%", height: 16, background: "#f3f4f1", borderRadius: 4, marginBottom: 8}}></div>
+                  <div style={{width: "30%", height: 12, background: "#f3f4f1", borderRadius: 4, marginBottom: 6}}></div>
+                  <div style={{width: "20%", height: 12, background: "#f3f4f1", borderRadius: 4, marginBottom: 6}}></div>
+                  <div style={{width: "25%", height: 12, background: "#f3f4f1", borderRadius: 4, marginBottom: 6}}></div>
+                  <div style={{width: "35%", height: 10, background: "#f3f4f1", borderRadius: 4}}></div>
+                </div>
+              </div>
+            ))}
+          </div>
         </main>
       </AdminLayout>
     )

@@ -58,8 +58,42 @@ export default function GuruPage() {
   if (loading) {
     return (
       <AdminLayout>
+        <style dangerouslySetInnerHTML={{ __html: responsiveStyles }} />
         <main style={mainContent}>
-          <p style={{ padding: 40, textAlign: "center", color: "#666" }}>Loading...</p>
+          {/* Title & Breadcrumb */}
+          <div style={titleSection}>
+            <h2 style={pageTitle}>Data Guru BK</h2>
+            <nav style={breadcrumb}>
+              <span style={breadcrumbItem}>Dashboard</span>
+              <span style={breadcrumbSeparator}>&rsaquo;</span>
+              <span style={breadcrumbActive}>Data Guru BK</span>
+            </nav>
+          </div>
+
+          {/* Search & Add Button */}
+          <div style={toolbar}>
+            <div style={searchWrapper}>
+              <input type="text" placeholder="Cari guru..." style={searchInput} disabled />
+            </div>
+            <button style={{...btnAdd, opacity: 0.6}} disabled>Tambah</button>
+          </div>
+
+          {/* Grid Skeletons */}
+          <div className="guru-grid">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} style={card} className="animate-pulse">
+                <div style={{...imageWrapper, background: "#f3f4f1"}}></div>
+                <div style={cardContent}>
+                  <div style={{width: "70%", height: 16, background: "#f3f4f1", borderRadius: 4, marginBottom: 8}}></div>
+                  <div style={{width: "50%", height: 12, background: "#f3f4f1", borderRadius: 4, marginBottom: 12}}></div>
+                  <div style={{display: "flex", gap: 6}}>
+                    <div style={{flex: 1, height: 26, background: "#f3f4f1", borderRadius: 6}}></div>
+                    <div style={{flex: 1, height: 26, background: "#f3f4f1", borderRadius: 6}}></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </main>
       </AdminLayout>
     )

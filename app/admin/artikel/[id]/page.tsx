@@ -73,7 +73,38 @@
       })
     }
 
-    if (loading) return <AdminLayout><p style={{padding: 20}}>Loading...</p></AdminLayout>
+    if (loading) {
+      return (
+        <AdminLayout>
+          <main style={mainContent}>
+            {/* Breadcrumb */}
+            <nav style={breadcrumb}>
+              <span style={breadcrumbItem}>Dashboard</span>
+              <span style={breadcrumbSeparator}>&rsaquo;</span>
+              <span style={breadcrumbItem}>Artikel</span>
+              <span style={breadcrumbSeparator}>&rsaquo;</span>
+              <span style={breadcrumbActive}>Detail</span>
+            </nav>
+
+            {/* Tombol Kembali */}
+            <button style={{...btnBack, opacity: 0.6}} disabled>
+              ← Kembali ke Daftar Artikel
+            </button>
+
+            {/* Card Detail Skeleton */}
+            <div style={detailCard} className="animate-pulse">
+              <div style={{...noImage, background: "#f3f4f1"}}></div>
+              <div style={{width: "60%", height: 26, background: "#f3f4f1", borderRadius: 4, marginBottom: 12}}></div>
+              <div style={{width: "40%", height: 14, background: "#f3f4f1", borderRadius: 4, marginBottom: 20}}></div>
+              <div style={{...divider, background: "#f0f0f0"}}></div>
+              <div style={{width: "100%", height: 14, background: "#f3f4f1", borderRadius: 4, marginBottom: 8}}></div>
+              <div style={{width: "100%", height: 14, background: "#f3f4f1", borderRadius: 4, marginBottom: 8}}></div>
+              <div style={{width: "80%", height: 14, background: "#f3f4f1", borderRadius: 4, marginBottom: 8}}></div>
+            </div>
+          </main>
+        </AdminLayout>
+      )
+    }
     
     if (error) return (
       <AdminLayout>
@@ -105,7 +136,7 @@
         <main style={mainContent}>
           {/* Breadcrumb */}
           <nav style={breadcrumb}>
-            <span style={breadcrumbItem} onClick={() => router.push("/dashboard")}>Dashboard</span>
+            <span style={breadcrumbItem} onClick={() => router.push("/admin")}>Dashboard</span>
             <span style={breadcrumbSeparator}>&rsaquo;</span>
             <span style={breadcrumbItem} onClick={() => router.push("/admin/artikel")}>Artikel</span>
             <span style={breadcrumbSeparator}>&rsaquo;</span>

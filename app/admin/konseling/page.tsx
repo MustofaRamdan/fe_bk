@@ -124,7 +124,77 @@ export default function AdminKonselingPage() {
   if (loading) {
     return (
       <AdminLayout>
-        <main style={mainContent}><p style={{padding: 40, textAlign: "center"}}>Loading...</p></main>
+        <main style={mainContent}>
+          {/* Title */}
+          <div style={titleSection}>
+            <h2 style={pageTitle}>Konseling</h2>
+            <nav style={breadcrumb}>
+              <span style={breadcrumbItem}>Dashboard</span>
+              <span style={breadcrumbSeparator}>&rsaquo;</span>
+              <span style={breadcrumbActive}>Konseling</span>
+            </nav>
+          </div>
+
+          {/* Stats Cards Skeleton */}
+          <div style={statsGrid}>
+            {[...Array(4)].map((_, i) => (
+              <div key={i} style={statCard} className="animate-pulse">
+                <div style={{width: 50, height: 12, background: "#f3f4f1", borderRadius: 4, marginBottom: 8}}></div>
+                <div style={{width: 30, height: 24, background: "#f3f4f1", borderRadius: 4}}></div>
+              </div>
+            ))}
+          </div>
+
+          {/* Filter Skeleton */}
+          <div style={filterBar}>
+            {[...Array(4)].map((_, i) => (
+              <button key={i} style={{...filterBtn, opacity: 0.6, cursor: "default"}} disabled>
+                Loading...
+              </button>
+            ))}
+          </div>
+
+          {/* Table Card Skeleton */}
+          <div style={tableCard}>
+            <div style={tableWrapper}>
+              <table style={table}>
+                <thead>
+                  <tr style={tableHead}>
+                    <th style={th}>ID</th>
+                    <th style={th}>Mode</th>
+                    <th style={th}>Pengirim</th>
+                    <th style={th}>Topik</th>
+                    <th style={th}>Status</th>
+                    <th style={th}>Tanggal</th>
+                    <th style={th}>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...Array(4)].map((_, i) => (
+                    <tr key={i} style={tableRow} className="animate-pulse">
+                      <td style={td}><div style={{width: 30, height: 14, background: "#f3f4f1", borderRadius: 4}}></div></td>
+                      <td style={td}><div style={{width: 60, height: 18, background: "#f3f4f1", borderRadius: 12}}></div></td>
+                      <td style={td}>
+                        <div style={{width: 100, height: 14, background: "#f3f4f1", borderRadius: 4, marginBottom: 6}}></div>
+                        <div style={{width: 80, height: 10, background: "#f3f4f1", borderRadius: 4}}></div>
+                      </td>
+                      <td style={td}>
+                        <div style={{width: 120, height: 14, background: "#f3f4f1", borderRadius: 4, marginBottom: 6}}></div>
+                        <div style={{width: 150, height: 10, background: "#f3f4f1", borderRadius: 4}}></div>
+                      </td>
+                      <td style={td}><div style={{width: 70, height: 18, background: "#f3f4f1", borderRadius: 12}}></div></td>
+                      <td style={td}>
+                        <div style={{width: 70, height: 12, background: "#f3f4f1", borderRadius: 4, marginBottom: 4}}></div>
+                        <div style={{width: 40, height: 10, background: "#f3f4f1", borderRadius: 4}}></div>
+                      </td>
+                      <td style={td}><div style={{width: 50, height: 24, background: "#f3f4f1", borderRadius: 6}}></div></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </main>
       </AdminLayout>
     )
   }
@@ -138,7 +208,7 @@ export default function AdminKonselingPage() {
         <div style={titleSection}>
           <h2 style={pageTitle}>Konseling</h2>
           <nav style={breadcrumb}>
-            <span style={breadcrumbItem} onClick={() => router.push("/admin/dashboard")}>Dashboard</span>
+            <span style={breadcrumbItem} onClick={() => router.push("/admin")}>Dashboard</span>
             <span style={breadcrumbSeparator}>&rsaquo;</span>
             <span style={breadcrumbActive}>Konseling</span>
           </nav>
@@ -218,9 +288,9 @@ export default function AdminKonselingPage() {
                               {item.kelas} - {item.jurusan}
                             </p>
                           )}
-                          {item.email && (
+                          {item.mode !== "anonim" && item.email && (
                             <p style={{margin: "2px 0 0", fontSize: 11, color: "#687E50"}}>
-                              ðŸ“§ {item.email}
+                              📧 {item.email}
                             </p>
                           )}
                         </div>
@@ -299,7 +369,7 @@ export default function AdminKonselingPage() {
                       </div>
                     </>
                   )}
-                  {selected.email && (
+                  {selected.mode !== "anonim" && selected.email && (
                     <div style={{gridColumn: "1 / -1"}}>
                       <p style={infoLabel}>Email (untuk jawaban)</p>
                       <p style={infoValue}>{selected.email}</p>
@@ -334,9 +404,9 @@ export default function AdminKonselingPage() {
                       style={modalTextarea}
                       rows={6}
                     />
-                    {selected.inginJawabanEmail && selected.email && (
+                    {selected.mode !== "anonim" && selected.inginJawabanEmail && selected.email && (
                       <p style={emailNotice}>
-                        â„¹ï¸ Jawaban akan dikirim ke email: {selected.email}
+                        ℹ️ Jawaban akan dikirim ke email: {selected.email}
                       </p>
                     )}
                   </>

@@ -75,7 +75,42 @@ export default function KaryaSiswaPage() {
     return (
       <AdminLayout>
         <main style={mainContent}>
-          <p style={{ padding: 40, textAlign: "center", color: "#666" }}>Loading...</p>
+          {/* Title & Breadcrumb */}
+          <div style={titleSection}>
+            <h2 style={pageTitle}>Karya Siswa</h2>
+            <nav style={breadcrumb}>
+              <span style={breadcrumbItem}>Dashboard</span>
+              <span style={breadcrumbSeparator}>&rsaquo;</span>
+              <span style={breadcrumbActive}>Karya Siswa</span>
+            </nav>
+          </div>
+
+          {/* Search & Add Button */}
+          <div style={toolbar}>
+            <div style={searchWrapper}>
+              <input type="text" placeholder="Cari..." style={searchInput} disabled />
+            </div>
+            <button style={{...btnAdd, opacity: 0.6}} disabled>Tambah Data</button>
+          </div>
+
+          {/* Cards Skeletons */}
+          <div style={cardsContainer}>
+            {[...Array(3)].map((_, i) => (
+              <div key={i} style={card} className="animate-pulse">
+                <div style={{...thumbnailWrapper, background: "#f3f4f1"}}></div>
+                <div style={cardContent}>
+                  <div style={{width: "50%", height: 20, background: "#f3f4f1", borderRadius: 4, marginBottom: 12}}></div>
+                  <div style={{width: "100%", height: 14, background: "#f3f4f1", borderRadius: 4, marginBottom: 8}}></div>
+                  <div style={{width: "80%", height: 14, background: "#f3f4f1", borderRadius: 4, marginBottom: 16}}></div>
+                  <div style={{width: "40%", height: 12, background: "#f3f4f1", borderRadius: 4, marginBottom: 12}}></div>
+                  <div style={{display: "flex", gap: 8, justifyContent: "flex-end"}}>
+                    <div style={{width: 70, height: 26, background: "#f3f4f1", borderRadius: 6}}></div>
+                    <div style={{width: 70, height: 26, background: "#f3f4f1", borderRadius: 6}}></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </main>
       </AdminLayout>
     )
@@ -112,7 +147,7 @@ export default function KaryaSiswaPage() {
               </svg>
             </span>
           </div>
-          <button style={btnAdd} onClick={() => router.push("/karya/tambah")}>
+          <button style={btnAdd} onClick={() => router.push("/karya/tambah?from=admin")}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
               <line x1="12" y1="5" x2="12" y2="19" />
               <line x1="5" y1="12" x2="19" y2="12" />

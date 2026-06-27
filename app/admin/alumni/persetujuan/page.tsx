@@ -279,7 +279,40 @@ const formatDate = (dateStr: string) => {
     return (
       <AdminLayout>
         <main style={mainContent}>
-          <p style={{ padding: 40, textAlign: "center", color: "#666" }}>Loading...</p>
+          {/* Title */}
+          <div style={titleSection}>
+            <h2 style={pageTitle}>Pengajuan Data Alumni</h2>
+            <p style={subtitle}>Daftar pengajuan data lanjutan dari alumni yang menunggu persetujuan</p>
+          </div>
+
+          {/* Filter & Search */}
+          <div style={toolbar}>
+            <div style={selectWrapper}>
+              <select style={filterSelect} disabled>
+                <option>Loading...</option>
+              </select>
+            </div>
+            <div style={searchWrapper}>
+              <input type="text" placeholder="Cari nama alumni..." style={searchInput} disabled />
+            </div>
+          </div>
+
+          {/* List Alumni Skeleton */}
+          <div style={listContainer}>
+            {[...Array(4)].map((_, i) => (
+              <div key={i} style={{...cardItem, cursor: "default"}} className="animate-pulse">
+                <div style={{...avatarSmall, background: "#f3f4f1"}}></div>
+                <div style={cardContent}>
+                  <div style={{width: "40%", height: 14, background: "#f3f4f1", borderRadius: 4, marginBottom: 6}}></div>
+                  <div style={{width: "60%", height: 12, background: "#f3f4f1", borderRadius: 4, marginBottom: 6}}></div>
+                  <div style={{width: "30%", height: 10, background: "#f3f4f1", borderRadius: 4}}></div>
+                </div>
+                <div style={cardRight}>
+                  <span style={{...badgeMenunggu, background: "#f3f4f1", color: "transparent"}}>Menunggu</span>
+                </div>
+              </div>
+            ))}
+          </div>
         </main>
       </AdminLayout>
     )

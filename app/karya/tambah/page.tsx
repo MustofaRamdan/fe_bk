@@ -1,15 +1,19 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useState, Suspense } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import DesktopLayout from "@/components/DesktopLayout"
+import AdminLayout from "@/components/AdminLayout"
 
 const KELAS_OPTIONS = ["X", "XI", "XII"]
 const JURUSAN_OPTIONS = ["RPL 1", "RPL 2", "BR 1", "BR 2", "AKL 1", "AKL 2", "MP 1", "MP 2"]
 
-export default function TambahKaryaPage() {
+function TambahKaryaForm() {
   const api = process.env.NEXT_PUBLIC_API_URL
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const fromAdmin = searchParams.get("from") === "admin"
+
   const [judul, setJudul] = useState("")
   const [deskripsi, setDeskripsi] = useState("")
 
@@ -106,7 +110,7 @@ export default function TambahKaryaPage() {
       }
 
       alert("Karya siswa berhasil disimpan! Status: PENDING (menunggu persetujuan admin)")
-      router.push("/karya")
+      router.push(fromAdmin ? "/admin/karya" : "/karya")
 
     } catch (err: any) {
       setError(err.message || "Terjadi kesalahan")
@@ -118,12 +122,18 @@ export default function TambahKaryaPage() {
 
   const handleCancel = () => {
     if (confirm("Batalkan perubahan?")) {
-      router.back()
+      if (fromAdmin) {
+        router.push("/admin/karya")
+      } else {
+        router.back()
+      }
     }
   }
 
+  const Layout = fromAdmin ? AdminLayout : DesktopLayout
+
   return (
-    <DesktopLayout>
+    <Layout>
 
       {/* Main Content */}
       <main style={mainContent}>
@@ -131,9 +141,9 @@ export default function TambahKaryaPage() {
         <div style={titleSection}>
           <h2 style={pageTitle}>Tambah Karya Siswa</h2>
           <nav style={breadcrumb}>
-            <span style={breadcrumbItem} onClick={() => router.push("/")}>Dashboard</span>
+            <span style={breadcrumbItem} onClick={() => router.push(fromAdmin ? "/admin" : "/")}>Dashboard</span>
             <span style={breadcrumbSeparator}>&rsaquo;</span>
-            <span style={breadcrumbItem} onClick={() => router.push("/karya")}>Karya Siswa</span>
+            <span style={breadcrumbItem} onClick={() => router.push(fromAdmin ? "/admin/karya" : "/karya")}>Karya Siswa</span>
             <span style={breadcrumbSeparator}>&rsaquo;</span>
             <span style={breadcrumbActive}>Tambah Karya Siswa</span>
           </nav>
@@ -350,7 +360,15 @@ export default function TambahKaryaPage() {
           </form>
         </div>
       </main>
-    </DesktopLayout>
+    </Layout>
+  )
+}
+
+export default function TambahKaryaPage() {
+  return (
+    <Suspense fallback={<div style={{ padding: 20 }}>Loading...</div>}>
+      <TambahKaryaForm />
+    </Suspense>
   )
 }
 
