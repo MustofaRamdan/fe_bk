@@ -576,9 +576,9 @@ const guruCard: React.CSSProperties = {
 }
 
 const guruFoto: React.CSSProperties = {
-  width: 60,
-  height: 60,
-  borderRadius: "50%",
+  width: 90,
+  aspectRatio: "3 / 4",
+  borderRadius: 8,
   objectFit: "cover",
   margin: "0 auto 8px",
   display: "block",

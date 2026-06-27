@@ -13,7 +13,11 @@
   }
 }
 
-/* ================= BODY ================= */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   background: var(--background);
   color: var(--text);
@@ -223,4 +227,10 @@ body {
 
 .animate-pulse {
   animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@media (min-width: 1024px) {
+  [data-footer-brand] {
+    grid-column: span 2;
+  }
 }

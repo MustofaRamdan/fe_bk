@@ -193,7 +193,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         {/* Footer */}
         <footer style={footerStyle}>
           <div style={footerContainer}>
-            <div style={footerBrand}>
+            <div data-footer-brand style={footerBrand}>
               <div style={footerLogoStyle}>
                 <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
                   <path d="M8 8L20 32L32 8" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
@@ -319,6 +319,8 @@ const desktopWrapper: React.CSSProperties = {
   minHeight: "100vh",
   background: "#e8e8e8",
   fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+  width: "100%",
+  overflowX: "hidden",
 }
 
 const sidebar: React.CSSProperties = {
@@ -455,6 +457,8 @@ const mainContent: React.CSSProperties = {
   minHeight: "100vh",
   display: "flex",
   flexDirection: "column",
+  width: "100%",
+  maxWidth: "100%",
 }
 
 const header: React.CSSProperties = {
@@ -528,7 +532,6 @@ const footerBrand: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
   gap: 16,
-  gridColumn: "span 2",
 }
 
 const footerLogoStyle: React.CSSProperties = {
