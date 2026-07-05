@@ -91,7 +91,7 @@ export default function KonselingPage() {
             </nav>
           </div>
 
-          <div style={card}>
+          <div className="form-card" style={card}>
             <h3 style={cardTitle}>Pilih Mode Konseling</h3>
             <p style={cardSubtitle}>Silakan pilih cara konseling yang Anda inginkan</p>
 
@@ -159,7 +159,7 @@ export default function KonselingPage() {
             </nav>
           </div>
 
-          <div style={card}>
+          <div className="form-card" style={card}>
             <div style={modeBadge}>
               Mode: <strong>{mode === "anonim" ? "Anonim" : "Siswa Terdaftar"}</strong>
               <button style={btnUbahMode} onClick={() => setStep(1)}>Ubah</button>
@@ -214,12 +214,14 @@ export default function KonselingPage() {
                       required={mode === "terdaftar"}
                     >
                       <option value="">Pilih Jurusan</option>
-                      <option value="RPL">Rekayasa Perangkat Lunak</option>
-                      <option value="TKJ">Teknik Komputer Jaringan</option>
-                      <option value="MM">Multimedia</option>
-                      <option value="AK">Akuntansi</option>
-                      <option value="AP">Administrasi Perkantoran</option>
-                      <option value="PM">Pemasaran</option>
+                      <option value="RPL 1">RPL 1</option>
+                      <option value="RPL 2">RPL 2</option>
+                      <option value="BR 1">BR 1</option>
+                      <option value="BR 2">BR 2</option>
+                      <option value="AK 1">AK 1</option>
+                      <option value="AK 2">AK 2</option>
+                      <option value="MP 1">MP 1</option>
+                      <option value="MP 2">MP 2</option>
                     </select>
                   </div>
                 </div>
@@ -321,7 +323,7 @@ export default function KonselingPage() {
   return (
     <DesktopLayout>
       <main style={mainContent}>
-        <div style={successCard}>
+        <div className="form-card" style={successCard}>
           <div style={successIcon}>
             <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#687E50" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
@@ -433,9 +435,12 @@ const breadcrumbActive = {
 
 const card = {
   background: "white",
-  padding: "24px",
-  borderRadius: 12,
-  boxShadow: "0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05)",
+  padding: "32px 28px",
+  borderRadius: 16,
+  boxShadow: "0 4px 20px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.03)",
+  border: "1px solid rgba(229, 231, 235, 0.6)",
+  maxWidth: 600,
+  margin: "0 auto",
 }
 
 const cardTitle = {
@@ -696,10 +701,13 @@ const errorBox = {
 const successCard = {
   background: "white",
   padding: "40px 24px",
-  borderRadius: 12,
-  boxShadow: "0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05)",
+  borderRadius: 16,
+  boxShadow: "0 4px 20px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.03)",
+  border: "1px solid rgba(229, 231, 235, 0.6)",
   textAlign: "center" as const,
   marginTop: 40,
+  maxWidth: 600,
+  margin: "40px auto 0",
 }
 
 const successIcon = {

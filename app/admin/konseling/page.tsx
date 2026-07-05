@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import AdminLayout from "@/components/AdminLayout"
+import Pagination from "@/components/Pagination"
 
 interface Konseling {
   id: number
@@ -21,11 +22,13 @@ interface Konseling {
 }
 
 export default function AdminKonselingPage() {
-      const api = process.env.NEXT_PUBLIC_API_URL
+  const api = process.env.NEXT_PUBLIC_API_URL
   const router = useRouter()
   const [data, setData] = useState<Konseling[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<"SEMUA" | "MENUNGGU" | "DIPROSES" | "SELESAI">("SEMUA")
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
   
   // Modal state
   const [modalOpen, setModalOpen] = useState(false)
@@ -46,7 +49,14 @@ export default function AdminKonselingPage() {
         }
       })
       const json = await res.json()
-      if (res.ok) setData(json.data)
+      if (res.ok) {
+        const list = json.data || []
+        setData(list)
+        // Reset to page 1 if data length decreases below current offset
+        if (currentPage > Math.ceil(list.length / itemsPerPage)) {
+          setCurrentPage(1)
+        }
+      }
     } catch (err) {
       console.error(err)
     } finally {
@@ -113,6 +123,17 @@ export default function AdminKonselingPage() {
   const filteredData = filter === "SEMUA" 
     ? data 
     : data.filter(item => item.status === filter)
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage)
+  const paginatedData = filteredData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  )
+
+  const handleFilterChange = (f: "SEMUA" | "MENUNGGU" | "DIPROSES" | "SELESAI") => {
+    setFilter(f)
+    setCurrentPage(1)
+  }
 
   const stats = {
     total: data.length,
@@ -243,7 +264,7 @@ export default function AdminKonselingPage() {
                 ...filterBtn,
                 ...(filter === f ? filterBtnActive : {})
               }}
-              onClick={() => setFilter(f)}
+              onClick={() => handleFilterChange(f)}
             >
               {f === "SEMUA" ? "Semua" : f.charAt(0) + f.slice(1).toLowerCase()}
             </button>
@@ -252,7 +273,7 @@ export default function AdminKonselingPage() {
 
         {/* Table */}
         <div style={tableCard}>
-          {filteredData.length === 0 ? (
+          {paginatedData.length === 0 ? (
             <p style={emptyText}>Tidak ada data konseling</p>
           ) : (
             <div style={tableWrapper}>
@@ -269,7 +290,7 @@ export default function AdminKonselingPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredData.map((item) => (
+                  {paginatedData.map((item) => (
                     <tr key={item.id} style={tableRow}>
                       <td style={td}>#{item.id}</td>
                       <td style={td}>
@@ -329,6 +350,13 @@ export default function AdminKonselingPage() {
             </div>
           )}
         </div>
+
+        {/* Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       </main>
 
       {/* ==================== MODAL ==================== */}

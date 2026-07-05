@@ -5,7 +5,7 @@ import { useRouter, useParams } from "next/navigation"
 import AdminLayout from "@/components/AdminLayout"
 
 const KELAS_OPTIONS = ["X", "XI", "XII"]
-const JURUSAN_OPTIONS = ["RPL", "BR", "AKL", "MP"]
+const JURUSAN_OPTIONS = ["RPL 1", "RPL 2", "BR 1", "BR 2", "AK 1", "AK 2", "MP 1", "MP 2"]
 
 export default function EditKaryaPage() {
   const api = process.env.NEXT_PUBLIC_API_URL
@@ -165,7 +165,7 @@ export default function EditKaryaPage() {
         {error && <div style={errorBox}>{error}</div>}
 
         {/* Card */}
-        <div style={card}>
+        <div className="form-card" style={card}>
           <form onSubmit={handleSubmit}>
             
             {/* Judul Karya */}
@@ -448,9 +448,12 @@ const errorBox = {
 
 const card = {
   background: "white",
-  padding: "24px",
-  borderRadius: 12,
-  boxShadow: "0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05)",
+  padding: "32px 28px",
+  borderRadius: 16,
+  boxShadow: "0 4px 20px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.03)",
+  border: "1px solid rgba(229, 231, 235, 0.6)",
+  maxWidth: 600,
+  margin: "0 auto",
 }
 
 const formGroup = {

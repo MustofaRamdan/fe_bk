@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import AdminLayout from "@/components/AdminLayout"
+import Pagination from "@/components/Pagination"
 
 const getPreviewHTML = (html: string) => {
   // hapus gambar dari konten
@@ -25,6 +26,8 @@ export default function ArtikelPage() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [error, setError] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 5
 
   useEffect(() => {
     fetchPosts()
@@ -71,6 +74,17 @@ export default function ArtikelPage() {
   const filteredPosts = posts.filter(p => 
     p.title.toLowerCase().includes(search.toLowerCase())
   )
+
+  const totalPages = Math.ceil(filteredPosts.length / itemsPerPage)
+  const paginatedPosts = filteredPosts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  )
+
+  const handleSearchChange = (val: string) => {
+    setSearch(val)
+    setCurrentPage(1)
+  }
 
   const formatDate = (date: Date | null) => {
     if (!date) return ""
@@ -152,7 +166,7 @@ export default function ArtikelPage() {
               type="text"
               placeholder="Cari..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
               style={searchInput}
             />
             <span style={searchIcon}>
@@ -175,10 +189,10 @@ export default function ArtikelPage() {
 
         {/* Cards */}
         <div style={cardsContainer}>
-          {filteredPosts.length === 0 ? (
+          {paginatedPosts.length === 0 ? (
             <p style={emptyText}>Belum ada artikel</p>
           ) : (
-            filteredPosts.map((post) => (
+            paginatedPosts.map((post) => (
               <div key={post.id} style={card}>
                 <h3 style={cardTitle}>{post.title}</h3>
                 <p style={cardDate}>{formatDate(post.publishedAt)}</p>
@@ -234,6 +248,13 @@ export default function ArtikelPage() {
             ))
           )}
         </div>
+
+        {/* Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       </main>
     </AdminLayout>
   )

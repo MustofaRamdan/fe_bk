@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import AdminLayout from "@/components/AdminLayout"
+import Pagination from "@/components/Pagination"
 
 type Karya = {
   id: number
@@ -30,6 +31,8 @@ export default function PersetujuanPage() {
   const [selectedKarya, setSelectedKarya] = useState<Karya | null>(null)
   const [modalType, setModalType] = useState<ModalType>(null)
   const [animating, setAnimating] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 8
   
   // State untuk alasan penolakan
   const [alasanTolak, setAlasanTolak] = useState("")
@@ -44,6 +47,10 @@ export default function PersetujuanPage() {
       const json = await res.json()
       const pending = (json.data || []).filter((k: Karya) => k.status === "PENDING")
       setKaryas(pending)
+      // Reset to page 1 if data length decreases below current offset
+      if (currentPage > Math.ceil(pending.length / itemsPerPage)) {
+        setCurrentPage(1)
+      }
     } catch (err) {
       console.error(err)
     } finally {
@@ -54,6 +61,12 @@ export default function PersetujuanPage() {
   useEffect(() => {
     fetchKaryas()
   }, [])
+
+  const totalPages = Math.ceil(karyas.length / itemsPerPage)
+  const paginated = karyas.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  )
 
   const openModal = (karya: Karya, type: ModalType) => {
     setSelectedKarya(karya)
@@ -185,7 +198,7 @@ export default function PersetujuanPage() {
         <h2 style={pageTitle}>Karya Menunggu Persetujuan</h2>
 
         <div style={listContainer}>
-          {karyas.length === 0 ? (
+          {paginated.length === 0 ? (
             <div style={emptyState}>
               <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -196,7 +209,7 @@ export default function PersetujuanPage() {
               <p>Tidak ada karya menunggu persetujuan</p>
             </div>
           ) : (
-            karyas.map((k) => (
+            paginated.map((k) => (
               <div key={k.id} style={listItem} onClick={() => openModal(k, "detail")}>
                 <div style={thumbnailWrapper}>
                   <img
@@ -223,6 +236,12 @@ export default function PersetujuanPage() {
             ))
           )}
         </div>
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       </main>
 
       {/* MODAL */}

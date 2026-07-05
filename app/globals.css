@@ -234,3 +234,120 @@ body {
     grid-column: span 2;
   }
 }
+
+/* ================= GLOBAL FORM INPUT STYLING ================= */
+.form-card {
+  max-width: 600px !important;
+  margin: 0 auto !important;
+  padding: 32px 28px !important;
+  border-radius: 16px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
+}
+
+input[type="text"]:not(.login-glass *),
+input[type="password"]:not(.login-glass *),
+input[type="url"],
+input[type="email"],
+input[type="date"],
+select,
+textarea {
+  padding: 12px 14px !important;
+  border-radius: 10px !important;
+  border: 1px solid #d1d5db !important;
+  font-size: 14px !important;
+  color: #1f2937 !important;
+  background-color: #ffffff !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+input[type="text"]:not(.login-glass *):focus,
+input[type="password"]:not(.login-glass *):focus,
+input[type="url"]:focus,
+input[type="email"]:focus,
+input[type="date"]:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(104, 126, 80, 0.18) !important;
+  background-color: #ffffff !important;
+  outline: none !important;
+}
+
+select option {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+}
+
+/* ================= RESPONSIVE ENLARGEMENTS FOR DESKTOP ================= */
+@media (min-width: 1024px) {
+  .form-card {
+    max-width: 680px !important;
+    padding: 44px 40px !important;
+    border-radius: 20px !important;
+  }
+  
+  .form-card.admin-article {
+    max-width: 760px !important;
+  }
+
+  .form-card input[type="text"],
+  .form-card input[type="password"],
+  .form-card input[type="url"],
+  .form-card input[type="email"],
+  .form-card input[type="date"],
+  .form-card select,
+  .form-card textarea {
+    padding: 14px 18px !important;
+    font-size: 16px !important;
+    border-radius: 12px !important;
+  }
+
+  .form-card label {
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    margin-bottom: 8px !important;
+  }
+
+  .form-card h2, 
+  .form-card h3 {
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.5px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .form-card p {
+    font-size: 15px !important;
+  }
+}
+
+/* ================= LOGIN GLASSMORPHISM INPUTS ================= */
+.login-glass input[type="text"],
+.login-glass input[type="password"] {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: none !important;
+  color: #fff !important;
+  font-size: 15px !important;
+  padding: 16px 16px 16px 52px !important;
+  border-radius: 14px !important;
+  outline: none !important;
+  width: 100% !important;
+  transition: all 0.3s ease !important;
+  caret-color: #C5D5A8 !important;
+}
+
+.login-glass input[type="text"]:focus,
+.login-glass input[type="password"]:focus {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(197, 213, 168, 0.5) !important;
+  box-shadow: 0 0 20px rgba(197, 213, 168, 0.15), inset 0 1px 0 rgba(255,255,255,0.1) !important;
+}
+
+.login-glass input[type="password"] {
+  padding-right: 52px !important;
+}
+
+.login-glass input::placeholder {
+  color: rgba(255, 255, 255, 0.35) !important;
+}

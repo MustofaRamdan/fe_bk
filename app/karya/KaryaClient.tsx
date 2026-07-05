@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import DesktopLayout from "@/components/DesktopLayout"
+import Pagination from "@/components/Pagination"
 
 export type Karya = {
   id: number
@@ -25,6 +26,8 @@ interface KaryaClientProps {
 export default function KaryaClient({ initialData, apiUrl }: KaryaClientProps) {
   const router = useRouter()
   const [search, setSearch] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 4
 
   const formatDate = (dateStr: string) => {
     const d = new Date(dateStr)
@@ -39,6 +42,17 @@ export default function KaryaClient({ initialData, apiUrl }: KaryaClientProps) {
     k.judul.toLowerCase().includes(search.toLowerCase()) ||
     k.namaPembuat.toLowerCase().includes(search.toLowerCase())
   )
+
+  const totalPages = Math.ceil(filtered.length / itemsPerPage)
+  const paginated = filtered.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  )
+
+  const handleSearchChange = (val: string) => {
+    setSearch(val)
+    setCurrentPage(1)
+  }
 
   return (
     <DesktopLayout>
@@ -61,7 +75,7 @@ export default function KaryaClient({ initialData, apiUrl }: KaryaClientProps) {
               type="text"
               placeholder="Cari..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
               style={searchInput}
             />
             <span style={searchIcon}>
@@ -82,7 +96,7 @@ export default function KaryaClient({ initialData, apiUrl }: KaryaClientProps) {
 
         {/* Cards */}
         <div style={cardsContainer}>
-          {filtered.length === 0 ? (
+          {paginated.length === 0 ? (
             <div style={emptyState}>
               <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5">
                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
@@ -92,7 +106,7 @@ export default function KaryaClient({ initialData, apiUrl }: KaryaClientProps) {
               <p>Belum ada karya siswa</p>
             </div>
           ) : (
-            filtered.map((k) => (
+            paginated.map((k) => (
               <div key={k.id} style={card}>
                 {/* Thumbnail */}
                 <div style={thumbnailWrapper}>
@@ -155,6 +169,13 @@ export default function KaryaClient({ initialData, apiUrl }: KaryaClientProps) {
             ))
           )}
         </div>
+
+        {/* Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       </main>
     </DesktopLayout>
   )

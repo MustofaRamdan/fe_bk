@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import Drawer from "@/components/Drawer"
+import { motion } from "framer-motion"
 
 interface DesktopLayoutProps {
   children: React.ReactNode
@@ -30,6 +31,7 @@ export default function DesktopLayout({ children }: DesktopLayoutProps) {
       children: [
         { label: "Lihat Karya Siswa", path: "/karya" },
         { label: "Tambah Karya Saya", path: "/karya/tambah" },
+        { label: "Buku Tamu Pengunjung", path: "/pengunjung" },
       ],
     },
     { icon: "artikel", label: "Artikel", path: "/artikel" },
@@ -51,7 +53,19 @@ export default function DesktopLayout({ children }: DesktopLayoutProps) {
     return false
   }
 
-  const isChildActive = (path: string) => pathname === path || pathname.startsWith(path + "/")
+  const isChildActive = (path: string) => {
+    if (pathname === path) return true
+    if (pathname.startsWith(path + "/")) {
+      const sibling = menuItems
+        .flatMap(item => item.children || [])
+        .find(child => child.path !== path && pathname.startsWith(child.path))
+      if (sibling) {
+        return false
+      }
+      return true
+    }
+    return false
+  }
 
   const toggleSubmenu = (label: string) => {
     setOpenSubmenu(prev => prev === label ? null : label)
@@ -171,8 +185,15 @@ export default function DesktopLayout({ children }: DesktopLayoutProps) {
         </header>
 
         {/* Page content goes here */}
-        <div style={{ flex: 1 }}>
-          {children}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            style={{ display: "flex", flexDirection: "column", flex: 1, width: "100%" }}
+          >
+            {children}
+          </motion.div>
         </div>
 
         {/* Footer */}

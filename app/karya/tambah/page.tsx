@@ -6,7 +6,7 @@ import DesktopLayout from "@/components/DesktopLayout"
 import AdminLayout from "@/components/AdminLayout"
 
 const KELAS_OPTIONS = ["X", "XI", "XII"]
-const JURUSAN_OPTIONS = ["RPL 1", "RPL 2", "BR 1", "BR 2", "AKL 1", "AKL 2", "MP 1", "MP 2"]
+const JURUSAN_OPTIONS = ["RPL 1", "RPL 2", "BR 1", "BR 2", "AK 1", "AK 2", "MP 1", "MP 2"]
 
 function TambahKaryaForm() {
   const api = process.env.NEXT_PUBLIC_API_URL
@@ -38,18 +38,40 @@ function TambahKaryaForm() {
     }
   }
 
+  const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"]
+  const MAX_SIZE_MB = 5
+  const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024
+
+  const validateFile = (file: File): string | null => {
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      return "File harus berupa gambar (JPG, PNG, WEBP, atau GIF)"
+    }
+    if (file.size > MAX_SIZE_BYTES) {
+      return `Ukuran file maksimal ${MAX_SIZE_MB} MB`
+    }
+    return null
+  }
+
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
     setDragActive(false)
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setThumbnail(e.dataTransfer.files[0])
+      const file = e.dataTransfer.files[0]
+      const err = validateFile(file)
+      if (err) { setError(err); return }
+      setError("")
+      setThumbnail(file)
     }
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setThumbnail(e.target.files[0])
+      const file = e.target.files[0]
+      const err = validateFile(file)
+      if (err) { setError(err); e.target.value = ""; return }
+      setError("")
+      setThumbnail(file)
     }
   }
 
@@ -66,18 +88,21 @@ function TambahKaryaForm() {
 
       let thumbnailUrl = ""
 
-      // Upload thumbnail karya
+      // Upload thumbnail karya (requires JWT token)
       if (thumbnail) {
+        const token = document.cookie.split(";").find(c => c.trim().startsWith("token="))?.split("=")[1]
         const formData = new FormData()
         formData.append("file", thumbnail)
 
         const uploadRes = await fetch(`${api}/api/upload`, {
           method: "POST",
+          headers: token ? { "Authorization": `Bearer ${token}` } : {},
           body: formData
         })
 
         if (!uploadRes.ok) {
-          throw new Error("Gagal mengunggah thumbnail karya")
+          const uploadErr = await uploadRes.json().catch(() => ({}))
+          throw new Error(uploadErr.error || "Gagal mengunggah thumbnail karya")
         }
 
         const uploadData = await uploadRes.json()
@@ -153,7 +178,7 @@ function TambahKaryaForm() {
         {error && <div style={errorBox}>{error}</div>}
 
         {/* Card */}
-        <div style={card}>
+        <div className="form-card" style={card}>
           <form onSubmit={handleSubmit}>
             
             {/* Judul Karya */}
@@ -285,9 +310,9 @@ function TambahKaryaForm() {
 
             {/* Upload Thumbnail Karya */}
             <div style={formGroup}>
-              <label style={label}>Upload karya siswa</label>
+              <label style={label}>Upload thumbnail / foto karya <span style={{fontSize: 12, color: "#999", fontWeight: 400}}>(opsional)</span></label>
               <p style={uploadKeterangan}>
-                📎 Upload berupa gambar/thumbnail/foto karya (JPG, PNG, WEBP)
+                📎 Format: JPG, PNG, WEBP, GIF &nbsp;|&nbsp; Maks. ukuran: <strong>5 MB</strong>
               </p>
               <div 
                 style={{
@@ -302,7 +327,7 @@ function TambahKaryaForm() {
               >
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
                   onChange={handleFileChange}
                   style={fileInput}
                 />
@@ -312,10 +337,17 @@ function TambahKaryaForm() {
                     <polyline points="17 8 12 3 7 8" />
                     <line x1="12" y1="3" x2="12" y2="15" />
                   </svg>
-                  <p style={uploadText}>Klik untuk mengunggah</p>
-                  <p style={uploadSubtext}>Seret dan lepas berkas disini</p>
-                  {thumbnail && (
-                    <p style={fileName}>{thumbnail.name}</p>
+                  {thumbnail ? (
+                    <>
+                      <p style={fileName}>✅ {thumbnail.name}</p>
+                      <p style={uploadSubtext}>{(thumbnail.size / 1024 / 1024).toFixed(2)} MB</p>
+                    </>
+                  ) : (
+                    <>
+                      <p style={uploadText}>Klik untuk mengunggah</p>
+                      <p style={uploadSubtext}>atau seret & lepas gambar ke sini</p>
+                      <p style={{...uploadSubtext, marginTop: 4, color: "#bbb"}}>JPG, PNG, WEBP, GIF • Maks. 5 MB</p>
+                    </>
                   )}
                 </div>
               </div>
@@ -468,9 +500,12 @@ const errorBox = {
 
 const card = {
   background: "white",
-  padding: "24px",
-  borderRadius: 12,
-  boxShadow: "0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05)",
+  padding: "32px 28px",
+  borderRadius: 16,
+  boxShadow: "0 4px 20px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.03)",
+  border: "1px solid rgba(229, 231, 235, 0.6)",
+  maxWidth: 600,
+  margin: "0 auto",
 }
 
 const formGroup = {

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import AdminLayout from "@/components/AdminLayout"
+import Pagination from "@/components/Pagination"
 
 type Alumni = {
   id: number
@@ -19,6 +20,8 @@ type Alumni = {
   buktiPendukung: string | null
   statusPengajuan: string
   created_at: string
+  jalurMasuk: string | null
+  disetujuiOleh: string | null
 }
 
 type ModalType = "detail" | "setuju" | "tolak" | null
@@ -40,15 +43,25 @@ export default function PersetujuanAlumniPage() {
   const [selectedAlumni, setSelectedAlumni] = useState<Alumni | null>(null)
   const [modalType, setModalType] = useState<ModalType>(null)
   const [animating, setAnimating] = useState(false)
+  const [filterStatus, setFilterStatus] = useState("PENDING")
+  const [currentUser, setCurrentUser] = useState<{ nama: string } | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
 
   const fetchAlumnis = async () => {
     try {
+      setLoading(true)
       const token = localStorage.getItem("token")
-      const res = await fetch(`${api}/api/alumni?statusPengajuan=PENDING`, {
+      const res = await fetch(`${api}/api/alumni?statusPengajuan=${filterStatus}`, {
         headers: token ? { "Authorization": `Bearer ${token}` } : {}
       })
       const json = await res.json()
-      setAlumnis(json.data || [])
+      const list = json.data || []
+      setAlumnis(list)
+      // Reset to page 1 if data length decreases below current offset
+      if (currentPage > Math.ceil(list.length / itemsPerPage)) {
+        setCurrentPage(1)
+      }
     } catch (err) {
       console.error(err)
     } finally {
@@ -58,7 +71,15 @@ export default function PersetujuanAlumniPage() {
 
   useEffect(() => {
     fetchAlumnis()
-  }, [])
+    const userStr = localStorage.getItem("user")
+    if (userStr) {
+      try {
+        setCurrentUser(JSON.parse(userStr))
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  }, [filterStatus])
 
   const openModal = (alumni: Alumni, type: ModalType) => {
     setSelectedAlumni(alumni)
@@ -149,10 +170,31 @@ const formatDate = (dateStr: string) => {
     return matchNama && matchJenis
   })
 
+  const totalPages = Math.ceil(filtered.length / itemsPerPage)
+  const paginated = filtered.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  )
+
+  const handleSearchChange = (val: string) => {
+    setSearchNama(val)
+    setCurrentPage(1)
+  }
+
+  const handleStatusChange = (val: string) => {
+    setFilterStatus(val)
+    setCurrentPage(1)
+  }
+
+  const handleJenisChange = (val: string) => {
+    setFilterJenis(val)
+    setCurrentPage(1)
+  }
+
   // Get info card berdasarkan status
   const getCardInfo = (alumni: Alumni) => {
     if (alumni.status === "KULIAH") {
-      return `${alumni.status} - ${alumni.namaKampus || "?"}\nTahun Masuk: ${alumni.tahunMasukKuliah || "?"}`
+      return `${alumni.status} (${alumni.jalurMasuk || "?"}) - ${alumni.namaKampus || "?"}\nTahun Masuk: ${alumni.tahunMasukKuliah || "?"}`
     }
     if (alumni.status === "BEKERJA") {
       return `Kerja - ${alumni.namaPerusahaan || "?"}\nTahun Masuk: ${alumni.tahunMasukKerja || "?"}`
@@ -209,13 +251,28 @@ const formatDate = (dateStr: string) => {
             <span style={detailValue}>{a.tahunMasukKuliah || "-"}</span>
           </div>
           <div style={detailRow}>
+            <span style={detailLabel}>Jalur Masuk</span>
+            <span style={detailValue}>{a.jalurMasuk || "-"}</span>
+          </div>
+          <div style={detailRow}>
             <span style={detailLabel}>Bukti Pendukung</span>
-            <a 
-            href={getFileUrl(a.buktiPendukung)}
-            target="_blank"
-            >
-            Lihat Bukti
-            </a>
+            {a.buktiPendukung ? (
+              <a 
+                href={getFileUrl(a.buktiPendukung)}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={btnBukti}
+                className="bukti-link"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                Lihat Bukti Berkas
+              </a>
+            ) : (
+              <span style={{ fontSize: "13px", color: "#999", fontStyle: "italic" }}>Tidak melampirkan berkas</span>
+            )}
           </div>
         </div>
       )
@@ -233,12 +290,23 @@ const formatDate = (dateStr: string) => {
           </div>
           <div style={detailRow}>
             <span style={detailLabel}>Bukti Pendukung</span>
-<a 
-  href={getFileUrl(a.buktiPendukung)}
-  target="_blank"
->
-  Lihat Bukti
-</a>
+            {a.buktiPendukung ? (
+              <a 
+                href={getFileUrl(a.buktiPendukung)}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={btnBukti}
+                className="bukti-link"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                Lihat Bukti Berkas
+              </a>
+            ) : (
+              <span style={{ fontSize: "13px", color: "#999", fontStyle: "italic" }}>Tidak melampirkan berkas</span>
+            )}
           </div>
         </div>
       )
@@ -256,12 +324,23 @@ const formatDate = (dateStr: string) => {
           </div>
           <div style={detailRow}>
             <span style={detailLabel}>Bukti Pendukung</span>
-            <a 
-            href={getFileUrl(a.buktiPendukung)}
-            target="_blank"
-            >
-            Lihat Bukti
-            </a>
+            {a.buktiPendukung ? (
+              <a 
+                href={getFileUrl(a.buktiPendukung)}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={btnBukti}
+                className="bukti-link"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                Lihat Bukti Berkas
+              </a>
+            ) : (
+              <span style={{ fontSize: "13px", color: "#999", fontStyle: "italic" }}>Tidak melampirkan berkas</span>
+            )}
           </div>
         </div>
       )
@@ -271,6 +350,14 @@ const formatDate = (dateStr: string) => {
       <>
         {header}
         {content}
+        {a.statusPengajuan === "DITERIMA" && a.disetujuiOleh && (
+          <div style={{ padding: "0 16px 16px", borderTop: "1px solid #f0f0f0", marginTop: 12, paddingTop: 12 }}>
+            <div style={detailRow}>
+              <span style={detailLabel}>Disetujui Oleh</span>
+              <span style={{ ...detailValue, color: "#166534", fontWeight: 600 }}>{a.disetujuiOleh}</span>
+            </div>
+          </div>
+        )}
       </>
     )
   }
@@ -287,6 +374,11 @@ const formatDate = (dateStr: string) => {
 
           {/* Filter & Search */}
           <div style={toolbar}>
+            <div style={{ ...selectWrapper, width: 160 }}>
+              <select style={filterSelect} disabled>
+                <option>Loading...</option>
+              </select>
+            </div>
             <div style={selectWrapper}>
               <select style={filterSelect} disabled>
                 <option>Loading...</option>
@@ -332,10 +424,26 @@ const formatDate = (dateStr: string) => {
 
         {/* Filter & Search */}
         <div style={toolbar}>
+          <div style={{ ...selectWrapper, width: 160 }}>
+            <select
+              value={filterStatus}
+              onChange={(e) => handleStatusChange(e.target.value)}
+              style={filterSelect}
+            >
+              <option value="PENDING">Menunggu Persetujuan</option>
+              <option value="DITERIMA">Telah Disetujui</option>
+            </select>
+            <span style={selectArrowSmall}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </span>
+          </div>
+
           <div style={selectWrapper}>
             <select
               value={filterJenis}
-              onChange={(e) => setFilterJenis(e.target.value)}
+              onChange={(e) => handleJenisChange(e.target.value)}
               style={filterSelect}
             >
               {JENIS_OPTIONS.map((j) => (
@@ -354,7 +462,7 @@ const formatDate = (dateStr: string) => {
               type="text"
               placeholder="Cari nama alumni..."
               value={searchNama}
-              onChange={(e) => setSearchNama(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
               style={searchInput}
             />
             <span style={searchIcon}>
@@ -368,12 +476,12 @@ const formatDate = (dateStr: string) => {
 
         {/* List Alumni */}
         <div style={listContainer}>
-          {filtered.length === 0 ? (
+          {paginated.length === 0 ? (
             <div style={emptyState}>
               <p>Tidak ada pengajuan data alumni</p>
             </div>
           ) : (
-            filtered.map((a) => (
+            paginated.map((a) => (
               <div 
                 key={a.id} 
                 style={cardItem}
@@ -388,10 +496,19 @@ const formatDate = (dateStr: string) => {
                 <div style={cardContent}>
                   <p style={cardTitle}>{getCardInfo(a).split('\n')[0]}</p>
                   <p style={cardSub}>{getCardInfo(a).split('\n')[1]}</p>
+                  {a.statusPengajuan === "DITERIMA" && a.disetujuiOleh && (
+                    <p style={{ ...cardSub, color: "#166534", fontWeight: 600 }}>
+                      Disetujui oleh: {a.disetujuiOleh}
+                    </p>
+                  )}
                   <p style={cardDate}>{formatDate(a.created_at)}</p>
                 </div>
                 <div style={cardRight}>
-                  <span style={badgeMenunggu}>Menunggu</span>
+                  {a.statusPengajuan === "PENDING" ? (
+                    <span style={badgeMenunggu}>Menunggu</span>
+                  ) : (
+                    <span style={{ background: "#dcfce7", color: "#166534", padding: "4px 10px", borderRadius: 20, fontSize: 11, fontWeight: 500 }}>Disetujui</span>
+                  )}
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="9 18 15 12 9 6" />
                   </svg>
@@ -400,6 +517,13 @@ const formatDate = (dateStr: string) => {
             ))
           )}
         </div>
+
+        {/* Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       </main>
 
       {/* MODAL */}
@@ -418,10 +542,12 @@ const formatDate = (dateStr: string) => {
 
               {renderDetailContent()}
 
-              <div style={modalActions}>
-                <button style={btnTolak} onClick={handleTolak}>Tolak</button>
-                <button style={btnSetuju} onClick={handleSetujui}>Setujui</button>
-              </div>
+              {selectedAlumni.statusPengajuan === "PENDING" && (
+                <div style={modalActions}>
+                  <button style={btnTolak} onClick={handleTolak}>Tolak</button>
+                  <button style={btnSetuju} onClick={handleSetujui}>Setujui</button>
+                </div>
+              )}
             </div>
           )}
 
@@ -455,7 +581,7 @@ const formatDate = (dateStr: string) => {
                 </div>
                 <div style={resultRow}>
                   <span style={resultLabel}>Oleh</span>
-                  <span style={resultValue}>Guru BK</span>
+                  <span style={resultValue}>{currentUser?.nama || "Guru BK"}</span>
                 </div>
               </div>
 
@@ -560,6 +686,16 @@ const modalStyles = `
   
   .result-modal > * {
     width: 100%;
+  }
+  .bukti-link {
+    transition: all 0.2s ease;
+  }
+  .bukti-link:hover {
+    background: #687E50 !important;
+    color: white !important;
+    border-color: #687E50 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(104,126,80,0.15);
   }
 `
 
@@ -973,4 +1109,21 @@ const btnOk = {
   fontWeight: 500,
   cursor: "pointer",
   minWidth: 120,
+}
+
+const btnBukti = {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "6px",
+  background: "#eef3e6",
+  color: "#687E50",
+  padding: "6px 14px",
+  borderRadius: "20px",
+  fontSize: "12px",
+  fontWeight: 600,
+  textDecoration: "none",
+  border: "1px solid #d8e2cf",
+  cursor: "pointer",
+  transition: "all 0.2s ease",
+  alignSelf: "flex-start" as const,
 }

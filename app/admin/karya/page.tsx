@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import AdminLayout from "@/components/AdminLayout"
+import Pagination from "@/components/Pagination"
 
 type Karya = {
   id: number
@@ -15,6 +16,7 @@ type Karya = {
   thumbnail: string | null
   status: string
   createdAt: string
+  disetujuiOleh: string | null
 }
 
 export default function KaryaSiswaPage() {
@@ -23,6 +25,8 @@ export default function KaryaSiswaPage() {
   const [karyas, setKaryas] = useState<Karya[]>([])
   const [search, setSearch] = useState("")
   const [loading, setLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 4
 
   const fetchKaryas = async () => {
     try {
@@ -70,6 +74,17 @@ export default function KaryaSiswaPage() {
     k.judul.toLowerCase().includes(search.toLowerCase()) ||
     k.namaPembuat.toLowerCase().includes(search.toLowerCase())
   )
+
+  const totalPages = Math.ceil(filtered.length / itemsPerPage)
+  const paginated = filtered.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  )
+
+  const handleSearchChange = (val: string) => {
+    setSearch(val)
+    setCurrentPage(1)
+  }
 
   if (loading) {
     return (
@@ -137,7 +152,7 @@ export default function KaryaSiswaPage() {
               type="text"
               placeholder="Cari..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
               style={searchInput}
             />
             <span style={searchIcon}>
@@ -158,7 +173,7 @@ export default function KaryaSiswaPage() {
 
         {/* Cards */}
         <div style={cardsContainer}>
-          {filtered.length === 0 ? (
+          {paginated.length === 0 ? (
             <div style={emptyState}>
               <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5">
                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
@@ -168,7 +183,7 @@ export default function KaryaSiswaPage() {
               <p>Belum ada karya siswa</p>
             </div>
           ) : (
-            filtered.map((k) => (
+            paginated.map((k) => (
               <div key={k.id} style={card}>
                 {/* Thumbnail */}
                 <div style={thumbnailWrapper}>
@@ -221,6 +236,13 @@ export default function KaryaSiswaPage() {
                       <span style={infoSeparator}>:</span>
                       <span style={infoValue}>{k.jurusan}</span>
                     </div>
+                    {k.disetujuiOleh && (
+                      <div style={infoRow}>
+                        <span style={infoLabel}>Disetujui</span>
+                        <span style={infoSeparator}>:</span>
+                        <span style={{ ...infoValue, color: "#166534", fontWeight: 600 }}>{k.disetujuiOleh}</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Tanggal */}
@@ -256,6 +278,13 @@ export default function KaryaSiswaPage() {
             ))
           )}
         </div>
+
+        {/* Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       </main>
     </AdminLayout>
   )

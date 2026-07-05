@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import AdminLayout from "@/components/AdminLayout"
+import Pagination from "@/components/Pagination"
 
 type Guru = {
   id: number
@@ -13,11 +14,13 @@ type Guru = {
 }
 
 export default function GuruPage() {
-    const api = process.env.NEXT_PUBLIC_API_URL
+  const api = process.env.NEXT_PUBLIC_API_URL
   const router = useRouter()
   const [data, setData] = useState<Guru[]>([])
   const [search, setSearch] = useState("")
   const [loading, setLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 8
 
   const fetchGuru = async () => {
     try {
@@ -38,6 +41,17 @@ export default function GuruPage() {
   const filtered = data.filter((g) =>
     g.nama.toLowerCase().includes(search.toLowerCase())
   )
+
+  const totalPages = Math.ceil(filtered.length / itemsPerPage)
+  const paginated = filtered.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  )
+
+  const handleSearchChange = (val: string) => {
+    setSearch(val)
+    setCurrentPage(1)
+  }
 
   const handleDelete = async (id: number) => {
     if (!confirm("Yakin hapus?")) return
@@ -125,7 +139,7 @@ export default function GuruPage() {
               type="text"
               placeholder="Cari guru..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
               style={searchInput}
             />
             <span style={searchIcon}>
@@ -145,7 +159,7 @@ export default function GuruPage() {
         </div>
 
         {/* Grid Cards */}
-        {filtered.length === 0 ? (
+        {paginated.length === 0 ? (
           <div style={emptyState}>
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -156,63 +170,71 @@ export default function GuruPage() {
             <p>Belum ada data guru</p>
           </div>
         ) : (
-          <div className="guru-grid">
-            {filtered.map((g) => (
-              <div key={g.id} style={card}>
-                {/* Foto */}
-                <div style={imageWrapper}>
-                  <img
-                    src={
-                      g.foto
-                        ? `${api}${g.foto}`
-                        : "/no-image.png"
-                    }
-                    alt={g.nama}
-                    style={cardImage}
-                  />
-                  <div style={kelasBadge}>
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                      <path d="M6 12v5c3 3 9 3 12 0v-5" />
-                    </svg>
-                    {g.kelas}
+          <>
+            <div className="guru-grid">
+              {paginated.map((g) => (
+                <div key={g.id} style={card}>
+                  {/* Foto */}
+                  <div style={imageWrapper}>
+                    <img
+                      src={
+                        g.foto
+                          ? `${api}${g.foto}`
+                          : "/no-image.png"
+                      }
+                      alt={g.nama}
+                      style={cardImage}
+                    />
+                    <div style={kelasBadge}>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                        <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                      </svg>
+                      {g.kelas}
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div style={cardContent}>
+                    <h3 style={cardName}>{g.nama}</h3>
+                    <p style={cardJabatan}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4 }}>
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                      </svg>
+                      {g.jabatan}
+                    </p>
+
+                    {/* Actions */}
+                    <div style={cardActions}>
+                      <button style={btnEdit} onClick={() => router.push(`/admin/guru/edit/${g.id}`)}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                        </svg>
+                        Edit
+                      </button>
+                      <button style={btnDelete} onClick={() => handleDelete(g.id)}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="3 6 5 6 21 6" />
+                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                          <line x1="10" y1="11" x2="10" y2="17" />
+                          <line x1="14" y1="11" x2="14" y2="17" />
+                        </svg>
+                        Hapus
+                      </button>
+                    </div>
                   </div>
                 </div>
+              ))}
+            </div>
 
-                {/* Content */}
-                <div style={cardContent}>
-                  <h3 style={cardName}>{g.nama}</h3>
-                  <p style={cardJabatan}>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4 }}>
-                      <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
-                      <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-                    </svg>
-                    {g.jabatan}
-                  </p>
-
-                  {/* Actions */}
-                  <div style={cardActions}>
-                    <button style={btnEdit} onClick={() => router.push(`/admin/guru/edit/${g.id}`)}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                      </svg>
-                      Edit
-                    </button>
-                    <button style={btnDelete} onClick={() => handleDelete(g.id)}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="3 6 5 6 21 6" />
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                        <line x1="10" y1="11" x2="10" y2="17" />
-                        <line x1="14" y1="11" x2="14" y2="17" />
-                      </svg>
-                      Hapus
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          </>
         )}
       </main>
     </AdminLayout>

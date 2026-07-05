@@ -36,6 +36,7 @@ export default function AdminDrawer({ isOpen, onClose }: AdminDrawerProps) {
       label: "Alumni",
       children: [
         { label: "Persetujuan Alumni", path: "/admin/alumni/persetujuan" },
+        { label: "Daftar Alumni", path: "/admin/alumni" },
       ],
     },
     { icon: "konseling", label: "Konseling", path: "/admin/konseling" },
@@ -60,7 +61,19 @@ export default function AdminDrawer({ isOpen, onClose }: AdminDrawerProps) {
     return false
   }
 
-  const isChildActive = (path: string) => pathname === path || pathname.startsWith(path + "/")
+  const isChildActive = (path: string) => {
+    if (pathname === path) return true
+    if (pathname.startsWith(path + "/")) {
+      const sibling = menuItems
+        .flatMap(item => item.children || [])
+        .find(child => child.path !== path && pathname.startsWith(child.path))
+      if (sibling) {
+        return false
+      }
+      return true
+    }
+    return false
+  }
 
   if (!isOpen) return null
 

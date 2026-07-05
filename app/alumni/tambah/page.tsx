@@ -54,6 +54,9 @@ export default function TambahAlumniPage() {
   const [namaKampus, setNamaKampus] = useState("")
   const [programStudi, setProgramStudi] = useState("")
   const [tahunMasukKuliah, setTahunMasukKuliah] = useState("")
+  const [jalurMasuk, setJalurMasuk] = useState("")
+  const [jalurSelect, setJalurSelect] = useState("")
+  const [jalurLainnya, setJalurLainnya] = useState("")
   // Bekerja
   const [namaPerusahaan, setNamaPerusahaan] = useState("")
   const [tahunMasukKerja, setTahunMasukKerja] = useState("")
@@ -76,18 +79,40 @@ export default function TambahAlumniPage() {
     }
   }
 
+  const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"]
+  const MAX_SIZE_MB = 5
+  const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024
+
+  const validateFile = (file: File): string | null => {
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      return "Bukti pendukung harus berupa gambar (JPG, PNG, WEBP, atau GIF)"
+    }
+    if (file.size > MAX_SIZE_BYTES) {
+      return `Ukuran file maksimal ${MAX_SIZE_MB} MB`
+    }
+    return null
+  }
+
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
     setDragActive(false)
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setBuktiPendukung(e.dataTransfer.files[0])
+      const file = e.dataTransfer.files[0]
+      const err = validateFile(file)
+      if (err) { setError(err); return }
+      setError("")
+      setBuktiPendukung(file)
     }
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setBuktiPendukung(e.target.files[0])
+      const file = e.target.files[0]
+      const err = validateFile(file)
+      if (err) { setError(err); e.target.value = ""; return }
+      setError("")
+      setBuktiPendukung(file)
     }
   }
 
@@ -116,6 +141,12 @@ export default function TambahAlumniPage() {
       return
     }
 
+    if (status === "KULIAH" && !jalurMasuk.trim()) {
+      setError("Jalur masuk kuliah wajib diisi")
+      setLoading(false)
+      return
+    }
+
     if (status === "BEKERJA" && !validateTahun(tahunMasukKerja)) {
       setError("Tahun masuk kerja tidak valid (format: YYYY)")
       setLoading(false)
@@ -132,15 +163,20 @@ export default function TambahAlumniPage() {
       let buktiUrl = ""
 
       if (buktiPendukung) {
+        const token = document.cookie.split(";").find(c => c.trim().startsWith("token="))?.split("=")[1]
         const formData = new FormData()
         formData.append("file", buktiPendukung)
 
         const uploadRes = await fetch(`${api}/api/upload`, {
           method: "POST",
+          headers: token ? { "Authorization": `Bearer ${token}` } : {},
           body: formData
         })
 
-        if (!uploadRes.ok) throw new Error("Gagal mengunggah bukti pendukung")
+        if (!uploadRes.ok) {
+          const uploadErr = await uploadRes.json().catch(() => ({}))
+          throw new Error(uploadErr.error || "Gagal mengunggah bukti pendukung")
+        }
 
         const uploadData = await uploadRes.json()
         buktiUrl = uploadData.url
@@ -157,6 +193,7 @@ export default function TambahAlumniPage() {
         payload.namaKampus = namaKampus
         payload.programStudi = programStudi
         payload.tahunMasukKuliah = tahunMasukKuliah
+        payload.jalurMasuk = jalurMasuk
       } else if (status === "BEKERJA") {
         payload.namaPerusahaan = namaPerusahaan
         payload.tahunMasukKerja = tahunMasukKerja
@@ -178,7 +215,13 @@ export default function TambahAlumniPage() {
       }
 
       alert("Pengajuan data alumni berhasil dikirim! Menunggu persetujuan admin.")
-      router.push("/alumni")
+      // Redirect ke tab yang sesuai berdasarkan status
+      const tabMap: Record<string, string> = {
+        KULIAH: "/alumni/kuliah",
+        BEKERJA: "/alumni/bekerja",
+        WIRAUSAHA: "/alumni/wirausaha",
+      }
+      router.push(tabMap[status] || "/alumni/kuliah")
 
     } catch (err: any) {
       setError(err.message || "Terjadi kesalahan")
@@ -222,14 +265,64 @@ export default function TambahAlumniPage() {
               />
             </div>
           </div>
-          <div style={formGroup}>
-            <label style={label}>Tahun Masuk Kuliah</label>
-            <TahunInput
-              value={tahunMasukKuliah}
-              onChange={setTahunMasukKuliah}
-              placeholder="Contoh: 2023"
-            />
+          <div style={formRow}>
+            <div style={formGroupHalf}>
+              <label style={label}>Tahun Masuk Kuliah</label>
+              <TahunInput
+                value={tahunMasukKuliah}
+                onChange={setTahunMasukKuliah}
+                placeholder="Contoh: 2023"
+              />
+            </div>
+            <div style={formGroupHalf}>
+              <label style={label}>Jalur Masuk</label>
+              <div style={selectWrapper}>
+                <select
+                  value={jalurSelect}
+                  onChange={(e) => {
+                    const val = e.target.value
+                    setJalurSelect(val)
+                    if (val !== "LAINNYA") {
+                      setJalurMasuk(val)
+                    } else {
+                      setJalurMasuk(jalurLainnya)
+                    }
+                  }}
+                  style={select}
+                  required
+                >
+                  <option value="">Pilih jalur masuk</option>
+                  <option value="SNBP">SNBP (Prestasi)</option>
+                  <option value="SNBT">SNBT (Tes)</option>
+                  <option value="MANDIRI">Mandiri</option>
+                  <option value="BEASISWA">Beasiswa</option>
+                  <option value="LAINNYA">Lainnya</option>
+                </select>
+                <span style={selectArrow}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </span>
+              </div>
+            </div>
           </div>
+          {jalurSelect === "LAINNYA" && (
+            <div style={formGroup}>
+              <label style={label}>Sebutkan Jalur Masuk Lainnya</label>
+              <input
+                type="text"
+                placeholder="Contoh: Kemitraan, Seleksi Rapor..."
+                value={jalurLainnya}
+                onChange={(e) => {
+                  const val = e.target.value
+                  setJalurLainnya(val)
+                  setJalurMasuk(val)
+                }}
+                style={input}
+                required
+              />
+            </div>
+          )}
         </>
       )
     }
@@ -310,7 +403,7 @@ export default function TambahAlumniPage() {
         {error && <div style={errorBox}>{error}</div>}
 
         {/* Card */}
-        <div style={card}>
+        <div className="form-card" style={card}>
           <form onSubmit={handleSubmit}>
             
             {/* Nama Lengkap */}
@@ -318,7 +411,7 @@ export default function TambahAlumniPage() {
               <label style={label}>Nama Lengkap</label>
               <input
                 type="text"
-                placeholder="Contoh: Poster Edukasi Mental Health"
+                placeholder="Masukkan nama lengkap..."
                 value={namaLengkap}
                 onChange={(e) => setNamaLengkap(e.target.value)}
                 style={input}
@@ -363,7 +456,10 @@ export default function TambahAlumniPage() {
 
             {/* Bukti Pendukung */}
             <div style={formGroup}>
-              <label style={label}>Bukti Pendukung</label>
+              <label style={label}>Bukti Pendukung <span style={{fontSize: 12, color: "#999", fontWeight: 400}}>(opsional)</span></label>
+              <p style={{fontSize: 12, color: "#666", margin: "0 0 8px 0", fontStyle: "italic"}}>
+                📎 Format: JPG, PNG, WEBP, GIF &nbsp;|&nbsp; Maks. ukuran: <strong>5 MB</strong>
+              </p>
               <div 
                 style={{
                   ...uploadBox,
@@ -377,7 +473,7 @@ export default function TambahAlumniPage() {
               >
                 <input
                   type="file"
-                  accept="image/*,.pdf"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
                   onChange={handleFileChange}
                   style={fileInput}
                 />
@@ -387,10 +483,17 @@ export default function TambahAlumniPage() {
                     <polyline points="17 8 12 3 7 8" />
                     <line x1="12" y1="3" x2="12" y2="15" />
                   </svg>
-                  <p style={uploadText}>Klik untuk mengunggah</p>
-                  <p style={uploadSubtext}>Seret dan lepas berkas disini</p>
-                  {buktiPendukung && (
-                    <p style={fileName}>{buktiPendukung.name}</p>
+                  {buktiPendukung ? (
+                    <>
+                      <p style={fileName}>✅ {buktiPendukung.name}</p>
+                      <p style={uploadSubtext}>{(buktiPendukung.size / 1024 / 1024).toFixed(2)} MB</p>
+                    </>
+                  ) : (
+                    <>
+                      <p style={uploadText}>Klik untuk mengunggah</p>
+                      <p style={uploadSubtext}>atau seret & lepas gambar ke sini</p>
+                      <p style={{...uploadSubtext, marginTop: 4, color: "#bbb"}}>JPG, PNG, WEBP, GIF • Maks. 5 MB</p>
+                    </>
                   )}
                 </div>
               </div>
@@ -520,9 +623,12 @@ const errorBox = {
 
 const card = {
   background: "white",
-  padding: "24px",
-  borderRadius: 12,
-  boxShadow: "0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05)",
+  padding: "32px 28px",
+  borderRadius: 16,
+  boxShadow: "0 4px 20px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.03)",
+  border: "1px solid rgba(229, 231, 235, 0.6)",
+  maxWidth: 600,
+  margin: "0 auto",
 }
 
 const formGroup = {

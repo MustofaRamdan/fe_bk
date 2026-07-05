@@ -22,6 +22,7 @@ export default function Drawer({ isOpen, onClose }: DrawerProps) {
       children: [
         { label: "Lihat Karya Siswa", path: "/karya" },
         { label: "Tambah Karya Saya", path: "/karya/tambah" },
+        { label: "Buku Tamu Pengunjung", path: "/pengunjung" },
       ],
     },
     { icon: "artikel", label: "Artikel", path: "/artikel" },

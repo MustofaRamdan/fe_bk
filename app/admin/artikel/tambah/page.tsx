@@ -157,7 +157,7 @@ export default function NewPost() {
         )}
 
         {/* Card */}
-        <div style={card}>
+        <div className="form-card admin-article" style={card}>
           <form onSubmit={handleSubmit}>
             
             <div style={formGroup}>
@@ -354,9 +354,12 @@ const errorBox = {
 
 const card = {
   background: "white",
-  padding: "24px",
-  borderRadius: 12,
-  boxShadow: "0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05)",
+  padding: "32px 28px",
+  borderRadius: 16,
+  boxShadow: "0 4px 20px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.03)",
+  border: "1px solid rgba(229, 231, 235, 0.6)",
+  maxWidth: 720,
+  margin: "0 auto",
 }
 
 const formGroup = {

@@ -62,3 +62,18 @@
     DITOLAK
     DITERIMA
   }
+
+  model Pengunjung {
+    id        Int      @id @default(autoincrement())
+    tipe      String   // "siswa" or "bukan_siswa"
+    nama      String
+    kelas     String?
+    jurusan   String?
+    tujuan    String?  @db.Text
+    alesan    String?  @db.Text
+    tanggal   String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("pengunjung")
+  }

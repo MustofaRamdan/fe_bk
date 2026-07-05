@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import AdminDrawer from "@/components/AdminDrawer"
+import { motion } from "framer-motion"
 
 interface AdminLayoutProps {
   children: React.ReactNode
@@ -38,6 +39,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       label: "Alumni",
       children: [
         { label: "Persetujuan Alumni", path: "/admin/alumni/persetujuan" },
+        { label: "Daftar Alumni", path: "/admin/alumni" },
       ],
     },
     { icon: "konseling", label: "Konseling", path: "/admin/konseling" },
@@ -186,8 +188,15 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </header>
 
         {/* Page content goes here */}
-        <div style={{ flex: 1 }}>
-          {children}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            style={{ display: "flex", flexDirection: "column", flex: 1, width: "100%" }}
+          >
+            {children}
+          </motion.div>
         </div>
 
         {/* Footer */}
@@ -222,6 +231,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               <h5 style={footerColTitle}>Alumni</h5>
               <div style={footerLinkList}>
                 <span onClick={() => handleNavigate("/admin/alumni/persetujuan")} style={footerLinkStyle}>Persetujuan Alumni</span>
+                <span onClick={() => handleNavigate("/admin/alumni")} style={footerLinkStyle}>Daftar Alumni</span>
               </div>
             </div>
 
