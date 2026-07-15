@@ -27,6 +27,7 @@ export default function KaryaClient({ initialData, apiUrl }: KaryaClientProps) {
   const router = useRouter()
   const [search, setSearch] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
+  const [selectedKarya, setSelectedKarya] = useState<Karya | null>(null)
   const itemsPerPage = 4
 
   const formatDate = (dateStr: string) => {
@@ -107,7 +108,7 @@ export default function KaryaClient({ initialData, apiUrl }: KaryaClientProps) {
             </div>
           ) : (
             paginated.map((k) => (
-              <div key={k.id} style={card}>
+              <div key={k.id} style={{ ...card, cursor: "pointer" }} onClick={() => setSelectedKarya(k)}>
                 {/* Thumbnail */}
                 <div style={thumbnailWrapper}>
                   <img
@@ -176,6 +177,63 @@ export default function KaryaClient({ initialData, apiUrl }: KaryaClientProps) {
           totalPages={totalPages}
           onPageChange={setCurrentPage}
         />
+
+        {/* Selected Karya Modal */}
+        {selectedKarya && (
+          <div style={modalOverlay} onClick={() => setSelectedKarya(null)}>
+            <div style={modalContent} onClick={(e) => e.stopPropagation()}>
+              <button style={modalClose} onClick={() => setSelectedKarya(null)}>&times;</button>
+              <div style={modalImageWrapper}>
+                <img 
+                  src={
+                    selectedKarya.thumbnail
+                      ? `${apiUrl}${selectedKarya.thumbnail}`
+                      : "/no-image.png"
+                  } 
+                  alt={selectedKarya.judul} 
+                  style={modalImage} 
+                  onError={(e) => { (e.target as HTMLImageElement).src = "/no-image.png" }}
+                />
+              </div>
+              <div style={modalDetails}>
+                <h3 style={modalTitle}>{selectedKarya.judul}</h3>
+                <p style={modalDescription}>{selectedKarya.deskripsi || "Tidak ada deskripsi."}</p>
+                
+                <div style={modalDivider} />
+                
+                <div style={modalAuthorSection}>
+                  <h4 style={modalSectionTitle}>Dibuat Oleh:</h4>
+                  <div style={modalInfoGrid}>
+                    <div style={modalInfoRow}>
+                      <span style={modalInfoLabel}>Nama</span>
+                      <span style={modalInfoSeparator}>:</span>
+                      <span style={modalInfoValue}>{selectedKarya.namaPembuat}</span>
+                    </div>
+                    <div style={modalInfoRow}>
+                      <span style={modalInfoLabel}>Kelas</span>
+                      <span style={modalInfoSeparator}>:</span>
+                      <span style={modalInfoValue}>{selectedKarya.kelas}</span>
+                    </div>
+                    <div style={modalInfoRow}>
+                      <span style={modalInfoLabel}>Jurusan</span>
+                      <span style={modalInfoSeparator}>:</span>
+                      <span style={modalInfoValue}>{selectedKarya.jurusan}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                {selectedKarya.link && (
+                  <div style={{ marginTop: 16 }}>
+                    <h4 style={modalSectionTitle}>Link Karya:</h4>
+                    <a href={selectedKarya.link} target="_blank" rel="noopener noreferrer" style={modalLink}>
+                      {selectedKarya.link}
+                    </a>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </DesktopLayout>
   )
@@ -200,8 +258,8 @@ const searchInput = { width: "100%", padding: "10px 36px 10px 12px", borderRadiu
 const searchIcon = { position: "absolute" as const, right: 12, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" as const }
 const btnAdd = { background: "#687E50", color: "white", padding: "10px 16px", border: "none", borderRadius: 8, fontSize: 14, fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", whiteSpace: "nowrap" as const }
 const cardsContainer = { display: "flex", flexDirection: "column" as const, gap: 16 }
-const card = { background: "white", borderRadius: 12, overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05)" }
-const thumbnailWrapper = { width: "100%", height: 200, overflow: "hidden" }
+const card = { background: "white", borderRadius: 12, overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05)", cursor: "pointer" }
+const thumbnailWrapper = { width: "100%", aspectRatio: "16 / 9", overflow: "hidden", background: "#f0f2eb" }
 const thumbnailImage = { width: "100%", height: "100%", objectFit: "cover" as const, display: "block" }
 const cardContent = { padding: "16px 20px 20px" }
 const cardTitle = { fontSize: 18, fontWeight: 700, color: "#333", margin: "0 0 8px 0" }
@@ -216,3 +274,147 @@ const infoSeparator = { width: 20, flexShrink: 0 }
 const infoValue = { flex: 1 }
 const cardDate = { fontSize: 13, color: "#999", margin: "0 0 12px 0" }
 const emptyState = { textAlign: "center" as const, padding: "60px 20px", color: "#999" }
+
+// Modal Styles
+const modalOverlay: React.CSSProperties = {
+  position: "fixed",
+  inset: 0,
+  background: "rgba(0, 0, 0, 0.6)",
+  backdropFilter: "blur(8px)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  zIndex: 9999,
+  padding: 20,
+}
+
+const modalContent: React.CSSProperties = {
+  background: "white",
+  borderRadius: 16,
+  width: "100%",
+  maxWidth: 600,
+  maxHeight: "90vh",
+  overflowY: "auto",
+  boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
+  position: "relative",
+}
+
+const modalClose: React.CSSProperties = {
+  position: "absolute",
+  top: 14,
+  right: 14,
+  background: "rgba(0,0,0,0.4)",
+  color: "white",
+  border: "none",
+  borderRadius: "50%",
+  width: 28,
+  height: 28,
+  fontSize: 18,
+  lineHeight: "26px",
+  textAlign: "center",
+  cursor: "pointer",
+  zIndex: 10,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  transition: "background 0.2s",
+}
+
+const modalImageWrapper: React.CSSProperties = {
+  width: "100%",
+  aspectRatio: "16 / 9",
+  background: "#f0f2eb",
+  overflow: "hidden",
+  position: "relative",
+}
+
+const modalImage: React.CSSProperties = {
+  width: "100%",
+  height: "100%",
+  objectFit: "cover",
+  display: "block",
+}
+
+const modalDetails: React.CSSProperties = {
+  padding: "24px",
+}
+
+const modalCategory: React.CSSProperties = {
+  fontSize: 11,
+  fontWeight: 700,
+  textTransform: "uppercase",
+  color: "#687E50",
+  background: "#f0f4e8",
+  padding: "4px 8px",
+  borderRadius: 4,
+  display: "inline-block",
+  marginBottom: 10,
+}
+
+const modalTitle: React.CSSProperties = {
+  fontSize: 20,
+  fontWeight: 700,
+  color: "#333",
+  margin: "0 0 10px 0",
+}
+
+const modalDescription: React.CSSProperties = {
+  fontSize: 14,
+  color: "#555",
+  lineHeight: 1.6,
+  margin: "0 0 20px 0",
+}
+
+const modalDivider: React.CSSProperties = {
+  height: "1px",
+  background: "#eee",
+  margin: "20px 0",
+}
+
+const modalAuthorSection: React.CSSProperties = {
+  background: "#f9fbf7",
+  padding: "16px",
+  borderRadius: 10,
+  border: "1px solid #edf2e8",
+}
+
+const modalSectionTitle: React.CSSProperties = {
+  fontSize: 13,
+  fontWeight: 700,
+  color: "#333",
+  margin: "0 0 10px 0",
+}
+
+const modalInfoGrid: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  gap: 8,
+}
+
+const modalInfoRow: React.CSSProperties = {
+  display: "flex",
+  fontSize: 13,
+  color: "#555",
+}
+
+const modalInfoLabel: React.CSSProperties = {
+  width: 70,
+  fontWeight: 500,
+}
+
+const modalInfoSeparator: React.CSSProperties = {
+  marginRight: 8,
+}
+
+const modalInfoValue: React.CSSProperties = {
+  fontWeight: 600,
+  color: "#333",
+}
+
+const modalLink: React.CSSProperties = {
+  fontSize: 13,
+  color: "#687E50",
+  textDecoration: "underline",
+  wordBreak: "break-all",
+}
+

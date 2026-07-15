@@ -38,9 +38,10 @@ export default function GuruPage() {
     fetchGuru()
   }, [])
 
-  const filtered = data.filter((g) =>
-    g.nama.toLowerCase().includes(search.toLowerCase())
-  )
+  const filtered = data.filter((g) => {
+    if (search.trim().length < 2) return true
+    return g.nama.toLowerCase().includes(search.toLowerCase())
+  })
 
   const totalPages = Math.ceil(filtered.length / itemsPerPage)
   const paginated = filtered.slice(

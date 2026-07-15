@@ -28,8 +28,12 @@ interface Guru {
 interface Karya {
   id: number
   judul: string
+  deskripsi: string
+  link: string | null
+  namaPembuat: string
+  kelas: string
+  jurusan: string
   thumbnail: string | null
-  kategori: string
   createdAt: string
 }
 
@@ -59,6 +63,7 @@ interface HomepageClientProps {
 export default function HomepageClient({ initialData, apiUrl }: HomepageClientProps) {
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
+  const [selectedKarya, setSelectedKarya] = useState<Karya | null>(null)
   const data = initialData
 
   const getPreviewText = (html: string, maxLength: number = 100) => {
@@ -145,6 +150,53 @@ export default function HomepageClient({ initialData, apiUrl }: HomepageClientPr
               style={searchInput}
             />
           </div>
+          {searchQuery.trim().length > 0 && (() => {
+            const query = searchQuery.toLowerCase()
+            const filteredArticles = data.artikel.filter(a => a.title.toLowerCase().includes(query))
+            const filteredGuru = data.guru.filter(g => g.nama.toLowerCase().includes(query))
+            const filteredKarya = data.karya.filter(k => k.judul.toLowerCase().includes(query))
+            const hasResults = filteredArticles.length > 0 || filteredGuru.length > 0 || filteredKarya.length > 0
+            return (
+              <div style={searchDropdown}>
+                {hasResults ? (
+                  <>
+                    {filteredArticles.length > 0 && (
+                      <div style={searchSection}>
+                        <p style={searchSectionTitle}>Artikel</p>
+                        {filteredArticles.map(a => (
+                          <div key={a.id} style={searchItem} onClick={() => { setSearchQuery(""); router.push(`/artikel/${a.id}`) }}>
+                            {a.title}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {filteredKarya.length > 0 && (
+                      <div style={searchSection}>
+                        <p style={searchSectionTitle}>Karya Siswa</p>
+                        {filteredKarya.map(k => (
+                          <div key={k.id} style={searchItem} onClick={() => { setSearchQuery(""); setSelectedKarya(k) }}>
+                            {k.judul}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {filteredGuru.length > 0 && (
+                      <div style={searchSection}>
+                        <p style={searchSectionTitle}>Guru BK</p>
+                        {filteredGuru.map(g => (
+                          <div key={g.id} style={searchItem} onClick={() => { setSearchQuery(""); router.push("/#guru-section") }}>
+                            {g.nama} - {g.jabatan}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <p style={noResultsText}>Tidak ada hasil yang cocok</p>
+                )}
+              </div>
+            )
+          })()}
         </div>
 
         {/* ============================================
@@ -223,7 +275,7 @@ export default function HomepageClient({ initialData, apiUrl }: HomepageClientPr
               </p>
             ) : (
               data.karya.slice(0, 8).map((k) => (
-                <div key={k.id} style={karyaCard}>
+                <div key={k.id} style={{ ...karyaCard, cursor: "pointer" }} onClick={() => setSelectedKarya(k)}>
                   {k.thumbnail ? (
                     <img
                       src={formatImageUrl(k.thumbnail)}
@@ -390,14 +442,58 @@ export default function HomepageClient({ initialData, apiUrl }: HomepageClientPr
           </div>
         </section>
 
-        {/* ============================================
-            FOOTER
-        ============================================ */}
-        <footer data-footer style={footerStyle}>
-          <div style={footerContent}>
-            <p style={footerText}>© 2024 Bimbingan Konseling — SMK Negeri 12 Jakarta</p>
+        {/* Selected Karya Modal */}
+        {selectedKarya && (
+          <div style={modalOverlay} onClick={() => setSelectedKarya(null)}>
+            <div style={modalContent} onClick={(e) => e.stopPropagation()}>
+              <button style={modalClose} onClick={() => setSelectedKarya(null)}>&times;</button>
+              <div style={modalImageWrapper}>
+                <img 
+                  src={formatImageUrl(selectedKarya.thumbnail)} 
+                  alt={selectedKarya.judul} 
+                  style={modalImage} 
+                  onError={(e) => { (e.target as HTMLImageElement).src = "/no-image.png" }}
+                />
+              </div>
+              <div style={modalDetails}>
+                <h3 style={modalTitle}>{selectedKarya.judul}</h3>
+                <p style={modalDescription}>{selectedKarya.deskripsi || "Tidak ada deskripsi."}</p>
+                
+                <div style={modalDivider} />
+                
+                <div style={modalAuthorSection}>
+                  <h4 style={modalSectionTitle}>Dibuat Oleh:</h4>
+                  <div style={modalInfoGrid}>
+                    <div style={modalInfoRow}>
+                      <span style={modalInfoLabel}>Nama</span>
+                      <span style={modalInfoSeparator}>:</span>
+                      <span style={modalInfoValue}>{selectedKarya.namaPembuat}</span>
+                    </div>
+                    <div style={modalInfoRow}>
+                      <span style={modalInfoLabel}>Kelas</span>
+                      <span style={modalInfoSeparator}>:</span>
+                      <span style={modalInfoValue}>{selectedKarya.kelas}</span>
+                    </div>
+                    <div style={modalInfoRow}>
+                      <span style={modalInfoLabel}>Jurusan</span>
+                      <span style={modalInfoSeparator}>:</span>
+                      <span style={modalInfoValue}>{selectedKarya.jurusan}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                {selectedKarya.link && (
+                  <div style={{ marginTop: 16 }}>
+                    <h4 style={modalSectionTitle}>Link Karya:</h4>
+                    <a href={selectedKarya.link} target="_blank" rel="noopener noreferrer" style={modalLink}>
+                      {selectedKarya.link}
+                    </a>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
-        </footer>
+        )}
     </DesktopLayout>
   )
 }
@@ -453,6 +549,7 @@ const heroPlaceholderBox: React.CSSProperties = {
 // Search Bar
 const searchBarWrapper: React.CSSProperties = {
   padding: "16px 20px 0",
+  position: "relative" as const,
 }
 
 const searchBar: React.CSSProperties = {
@@ -840,4 +937,195 @@ const footerText: React.CSSProperties = {
   color: "rgba(255,255,255,0.6)",
   fontSize: 13,
   margin: 0,
+}
+
+// Search Dropdown & Karya Modal Styles
+const searchDropdown: React.CSSProperties = {
+  position: "absolute",
+  top: "100%",
+  left: 20,
+  right: 20,
+  background: "rgba(255, 255, 255, 0.95)",
+  backdropFilter: "blur(12px)",
+  borderRadius: 12,
+  boxShadow: "0 10px 25px rgba(0,0,0,0.1), 0 2px 5px rgba(0,0,0,0.05)",
+  border: "1px solid rgba(229, 231, 235, 0.8)",
+  zIndex: 100,
+  maxHeight: 350,
+  overflowY: "auto",
+  marginTop: 6,
+  padding: 10,
+}
+
+const searchSection: React.CSSProperties = {
+  marginBottom: 10,
+}
+
+const searchSectionTitle: React.CSSProperties = {
+  fontSize: 11,
+  fontWeight: 700,
+  textTransform: "uppercase",
+  color: "#687E50",
+  letterSpacing: "0.5px",
+  padding: "4px 8px",
+  margin: 0,
+}
+
+const searchItem: React.CSSProperties = {
+  fontSize: 13,
+  padding: "8px 12px",
+  borderRadius: 6,
+  cursor: "pointer",
+  transition: "background 0.2s",
+  color: "#333",
+}
+
+const noResultsText: React.CSSProperties = {
+  textAlign: "center",
+  color: "#999",
+  fontSize: 13,
+  padding: "16px 0",
+  margin: 0,
+}
+
+const modalOverlay: React.CSSProperties = {
+  position: "fixed",
+  inset: 0,
+  background: "rgba(0, 0, 0, 0.6)",
+  backdropFilter: "blur(8px)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  zIndex: 9999,
+  padding: 20,
+}
+
+const modalContent: React.CSSProperties = {
+  background: "white",
+  borderRadius: 16,
+  width: "100%",
+  maxWidth: 600,
+  maxHeight: "90vh",
+  overflowY: "auto",
+  boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
+  position: "relative",
+}
+
+const modalClose: React.CSSProperties = {
+  position: "absolute",
+  top: 14,
+  right: 14,
+  background: "rgba(0,0,0,0.4)",
+  color: "white",
+  border: "none",
+  borderRadius: "50%",
+  width: 28,
+  height: 28,
+  fontSize: 18,
+  lineHeight: "26px",
+  textAlign: "center",
+  cursor: "pointer",
+  zIndex: 10,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  transition: "background 0.2s",
+}
+
+const modalImageWrapper: React.CSSProperties = {
+  width: "100%",
+  aspectRatio: "16 / 9",
+  background: "#f0f2eb",
+  overflow: "hidden",
+  position: "relative",
+}
+
+const modalImage: React.CSSProperties = {
+  width: "100%",
+  height: "100%",
+  objectFit: "cover",
+  display: "block",
+}
+
+const modalDetails: React.CSSProperties = {
+  padding: "24px",
+}
+
+const modalCategory: React.CSSProperties = {
+  fontSize: 11,
+  fontWeight: 700,
+  textTransform: "uppercase",
+  color: "#687E50",
+  background: "#f0f4e8",
+  padding: "4px 8px",
+  borderRadius: 4,
+  display: "inline-block",
+  marginBottom: 10,
+}
+
+const modalTitle: React.CSSProperties = {
+  fontSize: 20,
+  fontWeight: 700,
+  color: "#333",
+  margin: "0 0 10px 0",
+}
+
+const modalDescription: React.CSSProperties = {
+  fontSize: 14,
+  color: "#555",
+  lineHeight: 1.6,
+  margin: "0 0 20px 0",
+}
+
+const modalDivider: React.CSSProperties = {
+  height: "1px",
+  background: "#eee",
+  margin: "20px 0",
+}
+
+const modalAuthorSection: React.CSSProperties = {
+  background: "#f9fbf7",
+  padding: "16px",
+  borderRadius: 10,
+  border: "1px solid #edf2e8",
+}
+
+const modalSectionTitle: React.CSSProperties = {
+  fontSize: 13,
+  fontWeight: 700,
+  color: "#333",
+  margin: "0 0 10px 0",
+}
+
+const modalInfoGrid: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  gap: 8,
+}
+
+const modalInfoRow: React.CSSProperties = {
+  display: "flex",
+  fontSize: 13,
+  color: "#555",
+}
+
+const modalInfoLabel: React.CSSProperties = {
+  width: 70,
+  fontWeight: 500,
+}
+
+const modalInfoSeparator: React.CSSProperties = {
+  marginRight: 8,
+}
+
+const modalInfoValue: React.CSSProperties = {
+  fontWeight: 600,
+  color: "#333",
+}
+
+const modalLink: React.CSSProperties = {
+  fontSize: 13,
+  color: "#687E50",
+  textDecoration: "underline",
+  wordBreak: "break-all",
 }

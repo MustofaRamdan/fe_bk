@@ -168,6 +168,7 @@ export default function NewPost() {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 style={input}
+                maxLength={150}
                 required
               />
             </div>
@@ -217,15 +218,27 @@ export default function NewPost() {
                   style={fileInput}
                 />
                 <div style={uploadContent}>
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={uploadIcon}>
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                    <polyline points="17 8 12 3 7 8" />
-                    <line x1="12" y1="3" x2="12" y2="15" />
-                  </svg>
-                  <p style={uploadText}>Klik untuk mengunggah</p>
-                  <p style={uploadSubtext}>Seret dan lepas berkas disini</p>
-                  {thumbnail && (
-                    <p style={fileName}>{thumbnail.name}</p>
+                  {thumbnail ? (
+                    <>
+                      <div style={{ margin: "0 auto 12px", width: "100%", maxWidth: 160, aspectRatio: "16 / 9", borderRadius: 8, overflow: "hidden", border: "1px solid #ddd" }}>
+                        <img 
+                          src={URL.createObjectURL(thumbnail)} 
+                          alt="Pratinjau Gambar" 
+                          style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+                        />
+                      </div>
+                      <p style={fileName}>✅ {thumbnail.name}</p>
+                    </>
+                  ) : (
+                    <>
+                      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={uploadIcon}>
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="17 8 12 3 7 8" />
+                        <line x1="12" y1="3" x2="12" y2="15" />
+                      </svg>
+                      <p style={uploadText}>Klik untuk mengunggah</p>
+                      <p style={uploadSubtext}>Seret dan lepas berkas disini</p>
+                    </>
                   )}
                 </div>
               </div>

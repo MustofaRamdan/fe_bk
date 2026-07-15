@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { usePathname } from "next/navigation"
 
@@ -18,6 +19,7 @@ interface MenuItem {
 export default function AdminDrawer({ isOpen, onClose }: AdminDrawerProps) {
   const router = useRouter()
   const pathname = usePathname()
+  const [openSubmenu, setOpenSubmenu] = useState<string | null>(null)
 
   const menuItems: MenuItem[] = [
     { icon: "dashboard", label: "Dashboard", path: "/admin" },
@@ -40,7 +42,15 @@ export default function AdminDrawer({ isOpen, onClose }: AdminDrawerProps) {
       ],
     },
     { icon: "konseling", label: "Konseling", path: "/admin/konseling" },
+    { icon: "pengunjung", label: "Buku Tamu", path: "/admin/pengunjung" },
   ]
+
+  useEffect(() => {
+    const activeItem = menuItems.find(isActive)
+    if (activeItem && !activeItem.path) {
+      setOpenSubmenu(activeItem.label)
+    }
+  }, [pathname])
 
   const handleNavigate = (path: string) => {
     router.push(path)
@@ -118,14 +128,24 @@ export default function AdminDrawer({ isOpen, onClose }: AdminDrawerProps) {
                 </button>
               ) : (
                 <div>
-                  <div style={{
-                    ...menuItem,
-                    color: isActive(item) ? "#687E50" : "#333",
-                  }}>
-                    <span style={menuIcon}>{getIcon(item.icon, isActive(item))}</span>
+                  <button
+                    style={{
+                      ...menuItem,
+                      color: (openSubmenu === item.label) ? "#687E50" : "#333",
+                      background: "none",
+                      border: "none",
+                      width: "100%",
+                      textAlign: "left",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                    onClick={() => setOpenSubmenu(prev => prev === item.label ? null : item.label)}
+                  >
+                    <span style={menuIcon}>{getIcon(item.icon, item.path ? isActive(item) : false)}</span>
                     <span style={menuLabel}>{item.label}</span>
-                  </div>
-                  {item.children?.map((child, cidx) => (
+                  </button>
+                  {openSubmenu === item.label && item.children?.map((child, cidx) => (
                     <button
                       key={cidx}
                       style={{
@@ -205,6 +225,13 @@ function getIcon(name: string, active: boolean) {
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
         <circle cx="9" cy="7" r="4" />
+      </svg>
+    ),
+    pengunjung: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
       </svg>
     ),
   }

@@ -198,6 +198,28 @@ body {
     justify-content: center;
     overflow-x: visible;
   }
+
+  /* Contrast fixes for header items on desktop when header is transparent */
+  [data-header] .visitor-username-header,
+  [data-header] .admin-username-header {
+    color: #1f2937 !important;
+  }
+  [data-header] .btn-masuk-header {
+    color: #687E50 !important;
+    border-color: #687E50 !important;
+  }
+  [data-header] .btn-masuk-header:hover {
+    background: #687E50 !important;
+    color: white !important;
+  }
+  [data-header] div[style*="border: 2px solid white"],
+  [data-header] div[style*="border:2px solid white"] {
+    border-color: #687E50 !important;
+  }
+  [data-header] div[style*="border: 2px solid white"] svg,
+  [data-header] div[style*="border:2px solid white"] svg {
+    fill: #687E50 !important;
+  }
 }
 
 /* ================= SKELETON LOADER ANIMATIONS ================= */

@@ -48,6 +48,7 @@ export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [showAllActivities, setShowAllActivities] = useState(false)
 
   useEffect(() => {
     fetchStats()
@@ -214,7 +215,7 @@ export default function DashboardPage() {
             </div>
             <p style={statLabel}>Artikel</p>
             <p style={statValue}>{stats.artikel.total}</p>
-            <p style={statGrowth}>â†— {stats.artikel.growth > 0 ? '+' : ''}{stats.artikel.growth}%</p>
+            <p style={statGrowth}>↗ {stats.artikel.growth > 0 ? '+' : ''}{stats.artikel.growth}%</p>
           </div>
 
           {/* Guru BK */}
@@ -231,7 +232,7 @@ export default function DashboardPage() {
             <p style={statLabel}>Guru BK</p>
 <p style={statValue}>{stats.guruBK.total}</p>
 <p style={statGrowth}>
-  â†— {stats.guruBK.growth > 0 ? "+" : ""}
+  ↗ {stats.guruBK.growth > 0 ? "+" : ""}
   {stats.guruBK.growth}%
 </p>
           </div>
@@ -249,7 +250,7 @@ export default function DashboardPage() {
             <p style={statLabel}>Karya Siswa</p>
 <p style={statValue}>{stats.karyaSiswa.total}</p>
 <p style={statGrowth}>
-  â†— {stats.karyaSiswa.growth > 0 ? "+" : ""}
+  ↗ {stats.karyaSiswa.growth > 0 ? "+" : ""}
   {stats.karyaSiswa.growth}%
 </p>
           </div>
@@ -270,7 +271,7 @@ export default function DashboardPage() {
             <p style={statLabel}>Alumni</p>
 <p style={statValue}>{stats.alumni.total}</p>
 <p style={statGrowth}>
-  â†— {stats.alumni.growth > 0 ? "+" : ""}
+  ↗ {stats.alumni.growth > 0 ? "+" : ""}
   {stats.alumni.growth}%
 </p>
           </div>
@@ -285,7 +286,7 @@ export default function DashboardPage() {
             </div>
             <p style={statLabel}>Kuliah</p>
             <p style={statValue}>{stats.kuliah}</p>
-            <p style={statGrowth}>â†— 18%</p>
+            <p style={statGrowth}>↗ 18%</p>
           </div>
 
           {/* Bekerja */}
@@ -298,7 +299,7 @@ export default function DashboardPage() {
             </div>
             <p style={statLabel}>Bekerja</p>
             <p style={statValue}>{stats.bekerja}</p>
-            <p style={statGrowth}>â†— 18%</p>
+            <p style={statGrowth}>↗ 18%</p>
           </div>
 
           {/* Wirausaha */}
@@ -312,7 +313,7 @@ export default function DashboardPage() {
             </div>
             <p style={statLabel}>Wirausaha</p>
             <p style={statValue}>{stats.wirausaha}</p>
-            <p style={statGrowth}>â†— 18%</p>
+            <p style={statGrowth}>↗ 18%</p>
           </div>
 
           {/* Layanan */}
@@ -324,7 +325,7 @@ export default function DashboardPage() {
             </div>
             <p style={statLabel}>Layanan</p>
             <p style={statValue}>{stats.layanan}</p>
-            <p style={statGrowth}>â†— 18%</p>
+            <p style={statGrowth}>↗ 18%</p>
           </div>
         </div>
 
@@ -333,9 +334,9 @@ export default function DashboardPage() {
           <h3 style={sectionTitle}>Aktivitas Terbaru</h3>
           <button 
             style={btnLihatSemua}
-            onClick={() => router.push("/admin/artikel")}
+            onClick={() => setShowAllActivities(!showAllActivities)}
           >
-            Lihat Semua
+            {showAllActivities ? "Sembunyikan" : "Lihat Semua"}
           </button>
         </div>
 
@@ -343,7 +344,7 @@ export default function DashboardPage() {
           {stats.aktivitasTerbaru.length === 0 ? (
             <p style={emptyText}>Belum ada aktivitas</p>
           ) : (
-            stats.aktivitasTerbaru.map((item) => (
+            (showAllActivities ? stats.aktivitasTerbaru : stats.aktivitasTerbaru.slice(0, 3)).map((item) => (
               <div
                   key={item.id}
                   style={aktivitasItem}
@@ -376,7 +377,7 @@ export default function DashboardPage() {
                     <strong style={aktivitasNama}>{item.nama}</strong> {item.aksi}
                   </p>
                   <p style={aktivitasWaktu}>
-                    {item.waktu} â€¢ {new Date(item.tanggal).toLocaleTimeString("id-ID", {
+                    {item.waktu} • {new Date(item.tanggal).toLocaleTimeString("id-ID", {
                       hour: "2-digit",
                       minute: "2-digit"
                     })}

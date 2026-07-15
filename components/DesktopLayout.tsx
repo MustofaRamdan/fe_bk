@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import Drawer from "@/components/Drawer"
 import { motion } from "framer-motion"
@@ -21,6 +21,20 @@ export default function DesktopLayout({ children }: DesktopLayoutProps) {
   const pathname = usePathname()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null)
+  const [user, setUser] = useState<{ nama: string; nip: string } | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+    const storedUser = localStorage.getItem("user")
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser))
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  }, [])
 
   const menuItems: MenuItem[] = [
     { icon: "home", label: "Beranda", path: "/" },
@@ -174,13 +188,35 @@ export default function DesktopLayout({ children }: DesktopLayoutProps) {
           </button>
           <h1 data-header-title style={headerTitle}>BK SMKN 12 JAKARTA</h1>
           <div style={userInfo}>
-            <span style={userName}>Sumbul</span>
-            <div style={userIcon}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-                <circle cx="12" cy="8" r="4" />
-                <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-              </svg>
-            </div>
+            {mounted && user ? (
+              <>
+                <span style={userName} className="visitor-username-header">{user.nama}</span>
+                <div style={userIcon}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
+                  </svg>
+                </div>
+              </>
+            ) : (
+              <button 
+                onClick={() => router.push("/login")}
+                style={{
+                  background: "transparent",
+                  color: "white",
+                  border: "1px solid rgba(255,255,255,0.6)",
+                  padding: "6px 14px",
+                  borderRadius: "20px",
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  transition: "all 0.2s"
+                }}
+                className="btn-masuk-header"
+              >
+                Masuk
+              </button>
+            )}
           </div>
         </header>
 

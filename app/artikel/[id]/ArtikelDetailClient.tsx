@@ -60,7 +60,7 @@ export default function ArtikelDetailClient({ post, apiUrl }: ArtikelDetailClien
           {post.thumbnail ? (
             <div style={imageWrapper}>
                 <img
-                  src={`${apiUrl}${post.thumbnail}`}
+                  src={post.thumbnail.startsWith("http") ? post.thumbnail : `${apiUrl}${post.thumbnail}`}
                   alt={post.title}
                   style={detailImage}
                 />

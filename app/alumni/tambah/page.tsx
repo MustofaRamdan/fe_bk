@@ -167,7 +167,7 @@ export default function TambahAlumniPage() {
         const formData = new FormData()
         formData.append("file", buktiPendukung)
 
-        const uploadRes = await fetch(`${api}/api/upload`, {
+        const uploadRes = await fetch(`${api}/api/upload?private=true`, {
           method: "POST",
           headers: token ? { "Authorization": `Bearer ${token}` } : {},
           body: formData

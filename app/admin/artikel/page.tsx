@@ -200,7 +200,7 @@ export default function ArtikelPage() {
                 {post.thumbnail && (
                   <div style={imageWrapper}>
                     <img
-                      src={`${process.env.NEXT_PUBLIC_API_URL}${post.thumbnail}`}
+                      src={post.thumbnail.startsWith("http") ? post.thumbnail : `${process.env.NEXT_PUBLIC_API_URL}${post.thumbnail}`}
                       alt={post.title}
                       style={cardImage}
                     />

@@ -48,6 +48,14 @@ export default function KonselingPage() {
     setLoading(true)
     setError("")
 
+    if (form.inginJawabanEmail && form.email) {
+      if (!form.email.toLowerCase().endsWith("@gmail.com")) {
+        setError("Email harus menggunakan domain @gmail.com")
+        setLoading(false)
+        return
+      }
+    }
+
     try {
       const payload = {
         mode,

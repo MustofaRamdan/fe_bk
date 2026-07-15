@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import AdminDrawer from "@/components/AdminDrawer"
 import { motion } from "framer-motion"
@@ -21,6 +21,21 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const pathname = usePathname()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null)
+  const [adminName, setAdminName] = useState("Administrator")
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user")
+    if (storedUser) {
+      try {
+        const userObj = JSON.parse(storedUser)
+        if (userObj.nama) {
+          setAdminName(userObj.nama)
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  }, [])
 
   const menuItems: MenuItem[] = [
     { icon: "dashboard", label: "Dashboard", path: "/admin" },
@@ -43,7 +58,15 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       ],
     },
     { icon: "konseling", label: "Konseling", path: "/admin/konseling" },
+    { icon: "pengunjung", label: "Buku Tamu", path: "/admin/pengunjung" },
   ]
+
+  useEffect(() => {
+    const activeItem = menuItems.find(isActive)
+    if (activeItem && !activeItem.path) {
+      setOpenSubmenu(activeItem.label)
+    }
+  }, [pathname])
 
   const handleLogout = () => {
     document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;"
@@ -58,7 +81,19 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     return false
   }
 
-  const isChildActive = (path: string) => pathname === path || pathname.startsWith(path + "/")
+  const isChildActive = (path: string) => {
+    if (pathname === path) return true
+    if (pathname.startsWith(path + "/")) {
+      const sibling = menuItems
+        .flatMap(item => item.children || [])
+        .find(child => child.path !== path && pathname.startsWith(child.path))
+      if (sibling) {
+        return false
+      }
+      return true
+    }
+    return false
+  }
 
   const toggleSubmenu = (label: string) => {
     setOpenSubmenu(prev => prev === label ? null : label)
@@ -110,7 +145,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                     }}
                     onClick={() => toggleSubmenu(item.label)}
                   >
-                    <span style={sidebarIconWrap}>{getIcon(item.icon, isActive(item))}</span>
+                    <span style={sidebarIconWrap}>{getIcon(item.icon, item.path ? isActive(item) : false)}</span>
                     <span style={{ flex: 1 }}>{item.label}</span>
                     <svg
                       width="14" height="14"
@@ -127,7 +162,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                       <polyline points="6 9 12 15 18 9" />
                     </svg>
                   </button>
-                  {(openSubmenu === item.label || isActive(item)) && item.children?.map((child, cidx) => (
+                  {(openSubmenu === item.label) && item.children?.map((child, cidx) => (
                     <button
                       key={cidx}
                       style={{
@@ -177,7 +212,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           </button>
           <h1 data-header-title style={headerTitle}>ADMIN BK SMKN 12</h1>
           <div style={userInfo}>
-            <span style={userName}>Administrator</span>
+            <span style={userName} className="admin-username-header">{adminName}</span>
             <div style={userIcon}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
                 <circle cx="12" cy="8" r="4" />
@@ -314,6 +349,13 @@ function getIcon(name: string, active: boolean) {
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
         <circle cx="9" cy="7" r="4" />
+      </svg>
+    ),
+    pengunjung: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
       </svg>
     ),
   }

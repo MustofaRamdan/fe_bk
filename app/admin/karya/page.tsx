@@ -70,10 +70,14 @@ export default function KaryaSiswaPage() {
     })
   }
 
-  const filtered = karyas.filter((k) =>
-    k.judul.toLowerCase().includes(search.toLowerCase()) ||
-    k.namaPembuat.toLowerCase().includes(search.toLowerCase())
-  )
+  const filtered = karyas.filter((k) => {
+    const judul = k.judul || ""
+    const namaPembuat = k.namaPembuat || ""
+    return (
+      judul.toLowerCase().includes(search.toLowerCase()) ||
+      namaPembuat.toLowerCase().includes(search.toLowerCase())
+    )
+  })
 
   const totalPages = Math.ceil(filtered.length / itemsPerPage)
   const paginated = filtered.slice(
@@ -433,8 +437,9 @@ const card = {
 
 const thumbnailWrapper = {
   width: "100%",
-  height: 200,
+  aspectRatio: "16 / 9",
   overflow: "hidden",
+  background: "#f0f2eb",
 }
 
 const thumbnailImage = {

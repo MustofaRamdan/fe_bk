@@ -26,7 +26,8 @@ export default function AdminKonselingPage() {
   const router = useRouter()
   const [data, setData] = useState<Konseling[]>([])
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState<"SEMUA" | "MENUNGGU" | "DIPROSES" | "SELESAI">("SEMUA")
+  const [filter, setFilter] = useState<"SEMUA" | "MENUNGGU" | "SELESAI">("SEMUA")
+  const [searchQuery, setSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
   
@@ -114,15 +115,18 @@ export default function AdminKonselingPage() {
   const getStatusStyle = (status: string) => {
     switch (status) {
       case "MENUNGGU": return statusMenunggu
-      case "DIPROSES": return statusDiproses
       case "SELESAI": return statusSelesai
       default: return statusMenunggu
     }
   }
 
-  const filteredData = filter === "SEMUA" 
+  const filteredByStatus = filter === "SEMUA" 
     ? data 
     : data.filter(item => item.status === filter)
+
+  const filteredData = filteredByStatus.filter(item => 
+    item.nama.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   const totalPages = Math.ceil(filteredData.length / itemsPerPage)
   const paginatedData = filteredData.slice(
@@ -130,7 +134,7 @@ export default function AdminKonselingPage() {
     currentPage * itemsPerPage
   )
 
-  const handleFilterChange = (f: "SEMUA" | "MENUNGGU" | "DIPROSES" | "SELESAI") => {
+  const handleFilterChange = (f: "SEMUA" | "MENUNGGU" | "SELESAI") => {
     setFilter(f)
     setCurrentPage(1)
   }
@@ -138,7 +142,6 @@ export default function AdminKonselingPage() {
   const stats = {
     total: data.length,
     menunggu: data.filter(d => d.status === "MENUNGGU").length,
-    diproses: data.filter(d => d.status === "DIPROSES").length,
     selesai: data.filter(d => d.status === "SELESAI").length,
   }
 
@@ -245,10 +248,6 @@ export default function AdminKonselingPage() {
             <p style={{...statLabel, color: "#92400e"}}>Menunggu</p>
             <p style={{...statValue, color: "#92400e"}}>{stats.menunggu}</p>
           </div>
-          <div style={{...statCard, background: "#dbeafe"}}>
-            <p style={{...statLabel, color: "#1e40af"}}>Diproses</p>
-            <p style={{...statValue, color: "#1e40af"}}>{stats.diproses}</p>
-          </div>
           <div style={{...statCard, background: "#dcfce7"}}>
             <p style={{...statLabel, color: "#166534"}}>Selesai</p>
             <p style={{...statValue, color: "#166534"}}>{stats.selesai}</p>
@@ -257,7 +256,7 @@ export default function AdminKonselingPage() {
 
         {/* Filter */}
         <div style={filterBar}>
-          {(["SEMUA", "MENUNGGU", "DIPROSES", "SELESAI"] as const).map((f) => (
+          {(["SEMUA", "MENUNGGU", "SELESAI"] as const).map((f) => (
             <button
               key={f}
               style={{
@@ -269,6 +268,50 @@ export default function AdminKonselingPage() {
               {f === "SEMUA" ? "Semua" : f.charAt(0) + f.slice(1).toLowerCase()}
             </button>
           ))}
+        </div>
+
+        {/* Search Student Bar */}
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ position: "relative", width: "100%", maxWidth: 300 }}>
+            <input
+              type="text"
+              placeholder="Cari nama siswa..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value)
+                setCurrentPage(1)
+              }}
+              style={{
+                width: "100%",
+                padding: "8px 12px 8px 36px",
+                borderRadius: 8,
+                border: "1px solid #ddd",
+                fontSize: 14,
+                outline: "none",
+                background: "white",
+              }}
+            />
+            <svg 
+              width="16" 
+              height="16" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="#999" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+              style={{
+                position: "absolute",
+                left: 12,
+                top: "50%",
+                transform: "translateY(-50%)",
+                pointerEvents: "none",
+              }}
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </div>
         </div>
 
         {/* Table */}
@@ -368,7 +411,7 @@ export default function AdminKonselingPage() {
               <h3 style={modalTitle}>
                 {selected.status === "SELESAI" ? "Detail Jawaban" : "Jawab Konseling"}
               </h3>
-              <button style={modalClose} onClick={closeModal}>âœ•</button>
+              <button style={modalClose} onClick={closeModal}>✕</button>
             </div>
 
             {/* Modal Body */}

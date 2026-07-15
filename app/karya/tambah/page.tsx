@@ -190,6 +190,7 @@ function TambahKaryaForm() {
                 value={judul}
                 onChange={(e) => setJudul(e.target.value)}
                 style={input}
+                maxLength={100}
                 required
               />
             </div>
@@ -203,6 +204,7 @@ function TambahKaryaForm() {
                 value={deskripsi}
                 onChange={(e) => setDeskripsi(e.target.value)}
                 style={input}
+                maxLength={200}
                 required
               />
             </div>
@@ -339,6 +341,13 @@ function TambahKaryaForm() {
                   </svg>
                   {thumbnail ? (
                     <>
+                      <div style={{ margin: "0 auto 12px", width: "100%", maxWidth: 160, aspectRatio: "16 / 9", borderRadius: 8, overflow: "hidden", border: "1px solid #ddd" }}>
+                        <img 
+                          src={URL.createObjectURL(thumbnail)} 
+                          alt="Pratinjau Gambar" 
+                          style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+                        />
+                      </div>
                       <p style={fileName}>✅ {thumbnail.name}</p>
                       <p style={uploadSubtext}>{(thumbnail.size / 1024 / 1024).toFixed(2)} MB</p>
                     </>
