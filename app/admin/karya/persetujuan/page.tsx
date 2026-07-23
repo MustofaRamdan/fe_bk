@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import AdminLayout from "@/components/AdminLayout"
 import Pagination from "@/components/Pagination"
+import { getImageUrl } from "@/lib/image"
 
 type Karya = {
   id: number
@@ -213,11 +214,7 @@ export default function PersetujuanPage() {
               <div key={k.id} style={listItem} onClick={() => openModal(k, "detail")}>
                 <div style={thumbnailWrapper}>
                   <img
-                    src={
-                      k.thumbnail
-                        ? `${api}${k.thumbnail}`
-                        : "/no-image.png"
-                    }
+                    src={getImageUrl(k.thumbnail, api)}
                     alt={k.judul}
                     style={thumbnailImage}
                   />
@@ -263,11 +260,7 @@ export default function PersetujuanPage() {
               <div style={detailLayout}>
                 <div style={detailImageWrapper}>
                   <img
-                    src={
-                      selectedKarya.thumbnail
-                        ? `${api}${selectedKarya.thumbnail}`
-                        : "/no-image.png"
-                    }
+                    src={getImageUrl(selectedKarya.thumbnail, api)}
                     alt={selectedKarya.judul}
                     style={detailImage}
                   />

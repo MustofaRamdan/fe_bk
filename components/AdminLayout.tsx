@@ -132,6 +132,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                     ...(isActive(item) ? sidebarNavItemActiveStyle : {}),
                   }}
                   onClick={() => handleNavigate(item.path!)}
+                  onMouseEnter={() => router.prefetch(item.path!)}
                 >
                   <span style={sidebarIconWrap}>{getIcon(item.icon, isActive(item))}</span>
                   <span>{item.label}</span>
@@ -170,6 +171,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                         ...(isChildActive(child.path) ? sidebarSubItemActive : {}),
                       }}
                       onClick={() => handleNavigate(child.path)}
+                      onMouseEnter={() => router.prefetch(child.path)}
                     >
                       {child.label}
                     </button>

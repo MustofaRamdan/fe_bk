@@ -4,6 +4,8 @@
   import { useRouter, useParams } from "next/navigation"
   import Link from "next/link"
   import AdminLayout from "@/components/AdminLayout"
+  import { getImageUrl } from "@/lib/image"
+
 
   interface Post {
     id: number
@@ -158,7 +160,7 @@
             {post.thumbnail ? (
               <div style={imageWrapper}>
                   <img
-                    src={post.thumbnail.startsWith("http") ? post.thumbnail : `${process.env.NEXT_PUBLIC_API_URL}${post.thumbnail}`}
+                    src={getImageUrl(post.thumbnail, api)}
                     alt={post.title}
                   />
               </div>

@@ -122,6 +122,7 @@ export default function AdminDrawer({ isOpen, onClose }: AdminDrawerProps) {
                     color: isActive(item) ? "#687E50" : "#333",
                   }}
                   onClick={() => handleNavigate(item.path!)}
+                  onMouseEnter={() => router.prefetch(item.path!)}
                 >
                   <span style={menuIcon}>{getIcon(item.icon, isActive(item))}</span>
                   <span style={menuLabel}>{item.label}</span>
@@ -155,6 +156,7 @@ export default function AdminDrawer({ isOpen, onClose }: AdminDrawerProps) {
                         fontWeight: isChildActive(child.path) ? 600 : 400,
                       }}
                       onClick={() => handleNavigate(child.path)}
+                      onMouseEnter={() => router.prefetch(child.path)}
                     >
                       {child.label}
                     </button>

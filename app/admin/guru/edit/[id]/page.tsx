@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter, useParams } from "next/navigation"
 import AdminLayout from "@/components/AdminLayout"
+import { getImageUrl } from "@/lib/image"
 
 const KELAS_OPTIONS = ["X", "XI", "XII"]
 
@@ -245,14 +246,10 @@ export default function EditGuruPage() {
                 <label style={label}>Foto Saat Ini</label>
                 <div style={previewWrapper}>
                   <img
-  src={
-    fotoLama
-      ? `${api}${fotoLama}`
-      : "/no-image.png"
-  }
-  alt="Foto Lama"
-  style={previewImage}
-/>
+                    src={getImageUrl(fotoLama, api)}
+                    alt="Foto Lama"
+                    style={previewImage}
+                  />
                 </div>
               </div>
             )}

@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation"
 import DesktopLayout from "@/components/DesktopLayout"
+import { getImageUrl } from "@/lib/image"
+
 
 export interface PostDetail {
   id: number
@@ -60,7 +62,7 @@ export default function ArtikelDetailClient({ post, apiUrl }: ArtikelDetailClien
           {post.thumbnail ? (
             <div style={imageWrapper}>
                 <img
-                  src={post.thumbnail.startsWith("http") ? post.thumbnail : `${apiUrl}${post.thumbnail}`}
+                  src={getImageUrl(post.thumbnail, apiUrl)}
                   alt={post.title}
                   style={detailImage}
                 />

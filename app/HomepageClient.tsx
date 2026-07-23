@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import DesktopLayout from "@/components/DesktopLayout"
+import { getImageUrl } from "@/lib/image"
 
 // ============================================
 // INTERFACES
@@ -73,9 +74,7 @@ export default function HomepageClient({ initialData, apiUrl }: HomepageClientPr
   }
 
   const formatImageUrl = (path: string | null) => {
-    if (!path) return "/no-image.png"
-    if (path.startsWith("http")) return path
-    return `${apiUrl}${path}`
+    return getImageUrl(path, apiUrl)
   }
 
   return (

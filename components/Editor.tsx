@@ -52,7 +52,7 @@ export default function Editor({ onChange, initialValue = "" }: EditorProps) {
     }
 
     const data = await res.json()
-    return `${api}${data.url}`
+    return data.url?.startsWith("http") ? data.url : `${api}${data.url}`
   }
 
   return (

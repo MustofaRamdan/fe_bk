@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"
 import { useRouter, useParams } from "next/navigation"
 import Editor from "@/components/Editor"
 import AdminLayout from "@/components/AdminLayout"
+import { getImageUrl } from "@/lib/image"
+
 
 interface Post {
   id: number
@@ -266,7 +268,7 @@ export default function EditPost() {
               {existingThumbnail && !newThumbnail && (
                 <div style={existingThumbnailBox}>
                     <img 
-                      src={existingThumbnail.startsWith("http") ? existingThumbnail : `${api}${existingThumbnail}`}
+                      src={getImageUrl(existingThumbnail, api)}
                       alt="Thumbnail saat ini"
                       style={existingThumbnailImg}
                     />

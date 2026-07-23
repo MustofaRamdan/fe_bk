@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import DesktopLayout from "@/components/DesktopLayout"
 import Pagination from "@/components/Pagination"
+import { getImageUrl } from "@/lib/image"
 
 export type Karya = {
   id: number
@@ -112,14 +113,11 @@ export default function KaryaClient({ initialData, apiUrl }: KaryaClientProps) {
                 {/* Thumbnail */}
                 <div style={thumbnailWrapper}>
                   <img
-                    src={
-                      k.thumbnail
-                        ? `${apiUrl}${k.thumbnail}`
-                        : "/no-image.png"
-                    }
+                    src={getImageUrl(k.thumbnail, apiUrl)}
                     alt={k.judul}
                     style={thumbnailImage}
                   />
+
                 </div>
 
                 {/* Content */}
@@ -185,11 +183,7 @@ export default function KaryaClient({ initialData, apiUrl }: KaryaClientProps) {
               <button style={modalClose} onClick={() => setSelectedKarya(null)}>&times;</button>
               <div style={modalImageWrapper}>
                 <img 
-                  src={
-                    selectedKarya.thumbnail
-                      ? `${apiUrl}${selectedKarya.thumbnail}`
-                      : "/no-image.png"
-                  } 
+                  src={getImageUrl(selectedKarya.thumbnail, apiUrl)} 
                   alt={selectedKarya.judul} 
                   style={modalImage} 
                   onError={(e) => { (e.target as HTMLImageElement).src = "/no-image.png" }}

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter, useParams } from "next/navigation"
 import AdminLayout from "@/components/AdminLayout"
+import { getImageUrl } from "@/lib/image"
 
 const KELAS_OPTIONS = ["X", "XI", "XII"]
 const JURUSAN_OPTIONS = ["RPL 1", "RPL 2", "BR 1", "BR 2", "AK 1", "AK 2", "MP 1", "MP 2"]
@@ -271,11 +272,7 @@ export default function EditKaryaPage() {
                 <label style={label}>Thumbnail Saat Ini</label>
                 <div style={previewWrapper}>
                   <img
-                    src={
-                      thumbnailLama
-                        ? `${process.env.NEXT_PUBLIC_API_URL}${thumbnailLama}`
-                        : "/no-image.png"
-                    }
+                    src={getImageUrl(thumbnailLama, api)}
                     alt="Thumbnail Lama"
                     style={previewImage}
                   />

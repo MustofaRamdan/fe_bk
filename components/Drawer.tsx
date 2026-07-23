@@ -86,6 +86,7 @@ export default function Drawer({ isOpen, onClose }: DrawerProps) {
         : "#333",
   }}
   onClick={() => handleNavigate(item.path)}
+  onMouseEnter={() => router.prefetch(item.path)}
 >
                   <span style={menuIcon}>{getIcon(item.icon)}</span>
                   <span style={menuLabel}>{item.label}</span>
@@ -101,6 +102,7 @@ export default function Drawer({ isOpen, onClose }: DrawerProps) {
                       key={cidx}
                       style={subMenuItem}
                       onClick={() => handleNavigate(child.path)}
+                      onMouseEnter={() => router.prefetch(child.path)}
                     >
                       {child.label}
                     </button>

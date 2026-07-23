@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import AdminLayout from "@/components/AdminLayout"
 import Pagination from "@/components/Pagination"
+import { getImageUrl } from "@/lib/image"
 
 type Karya = {
   id: number
@@ -192,11 +193,7 @@ export default function KaryaSiswaPage() {
                 {/* Thumbnail */}
                 <div style={thumbnailWrapper}>
                   <img
-                    src={
-                      k.thumbnail
-                        ? `${process.env.NEXT_PUBLIC_API_URL}${k.thumbnail}`
-                        : "/no-image.png"
-                    }
+                    src={getImageUrl(k.thumbnail, api)}
                     alt={k.judul}
                     style={thumbnailImage}
                   />

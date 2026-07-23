@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import AdminLayout from "@/components/AdminLayout"
 import Pagination from "@/components/Pagination"
+import { getImageUrl } from "@/lib/image"
+
 
 const getPreviewHTML = (html: string) => {
   // hapus gambar dari konten
@@ -200,7 +202,7 @@ export default function ArtikelPage() {
                 {post.thumbnail && (
                   <div style={imageWrapper}>
                     <img
-                      src={post.thumbnail.startsWith("http") ? post.thumbnail : `${process.env.NEXT_PUBLIC_API_URL}${post.thumbnail}`}
+                      src={getImageUrl(post.thumbnail)}
                       alt={post.title}
                       style={cardImage}
                     />

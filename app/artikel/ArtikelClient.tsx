@@ -4,6 +4,8 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import DesktopLayout from "@/components/DesktopLayout"
 import Pagination from "@/components/Pagination"
+import { getImageUrl } from "@/lib/image"
+
 
 const getPreviewHTML = (html: string) => {
   // hapus gambar dari konten
@@ -106,9 +108,9 @@ export default function ArtikelClient({ initialData, apiUrl }: ArtikelClientProp
                 {post.thumbnail && (
                   <div style={imageWrapper}>
                     <img
-                       src={post.thumbnail.startsWith("http") ? post.thumbnail : `${apiUrl}${post.thumbnail}`}
-                      alt={post.title}
-                      style={cardImage}
+                       src={getImageUrl(post.thumbnail, apiUrl)}
+                       alt={post.title}
+                       style={cardImage}
                     />
                   </div>
                 )}

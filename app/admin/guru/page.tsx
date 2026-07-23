@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import AdminLayout from "@/components/AdminLayout"
 import Pagination from "@/components/Pagination"
+import { getImageUrl } from "@/lib/image"
 
 type Guru = {
   id: number
@@ -178,11 +179,7 @@ export default function GuruPage() {
                   {/* Foto */}
                   <div style={imageWrapper}>
                     <img
-                      src={
-                        g.foto
-                          ? `${api}${g.foto}`
-                          : "/no-image.png"
-                      }
+                      src={getImageUrl(g.foto, api)}
                       alt={g.nama}
                       style={cardImage}
                     />
